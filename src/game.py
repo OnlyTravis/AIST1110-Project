@@ -1,6 +1,6 @@
 import pygame
 
-from game.event import EventHandler
+from src.games.event import event_handler
 from src.options import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 
 class Game:
@@ -9,11 +9,9 @@ class Game:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         
-        event_handler = EventHandler()
         event_handler.addListener(pygame.QUIT, pygame.quit)
     
     def run(self):
-        event_handler = EventHandler()
         while (True):
             for event in pygame.event.get():
                 event_handler.handle_event(event)
