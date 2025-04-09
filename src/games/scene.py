@@ -7,16 +7,16 @@ class Scene():
         self.toScene: Callable = toScene
         self.listeners: list[int] = []
     
-    def update():
+    def update(self):
         pass
 
-    def draw():
+    def draw(self):
         pass
 
     def exit(self):
         for listener_id in self.listeners:
             event_handler.removeListener(listener_id)
 
-    def exitTo(self, scene):
+    def exitTo(self, scene_class):
         self.exit()
-        self.toScene(scene)
+        self.toScene(scene_class)

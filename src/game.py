@@ -29,5 +29,5 @@ class Game:
             pygame.display.flip()
             self.clock.tick(FPS)
     
-    def changeScene(self, scene: Scene):
-        self.scene = scene
+    def changeScene(self, SceneClass):
+        self.scene = SceneClass(self.screen, self.changeScene)
