@@ -1,9 +1,11 @@
 from collections.abc import Callable
+from pygame.surface import Surface
 
 from src.games.event import event_handler
 
 class Scene():
-    def __init__(self, toScene: Callable):
+    def __init__(self, screen: Surface, toScene: Callable):
+        self.screen = screen
         self.toScene: Callable = toScene
         self.listeners: list[int] = []
     

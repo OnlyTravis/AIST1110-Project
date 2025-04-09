@@ -1,5 +1,9 @@
 # Group Project for AIST1110
 
+YL-36 Doing Task:
+
+Travis Doing Task:
+
 ## To-do list : 
 - TitleScreen Design
 - A manager class for saving data (e.g. not showing tutorial screen again, highscore...)
@@ -7,6 +11,5 @@
 - GameObject
 - Player
 
-YL-36 Doing Task:
-
-Travis Doing Task:
+## Finished :
+- EventHandler Class

@@ -7,9 +7,7 @@ from src.scenes.tutorial import TutorialScreen
 
 class TitleScreen(Scene):
     def __init__(self, screen: surface.Surface, toScene: Callable):
-        super().__init__(toScene)
-
-        self.screen = screen
+        super().__init__(screen, toScene)
 
         listener_id = event_handler.addListener(KEYDOWN, self.onKeyDown)
         self.listeners.append(listener_id)

@@ -6,9 +6,7 @@ from src.games.event import event_handler
 
 class GameScene(Scene):
     def __init__(self, screen: surface.Surface, toScene: Callable):
-        super().__init__(toScene)
-
-        self.screen = screen
+        super().__init__(screen, toScene)
 
     def draw(self):
         w, h = self.screen.get_size()
