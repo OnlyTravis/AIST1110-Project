@@ -1,8 +1,6 @@
 import pygame.event
 from collections.abc import Callable
 
-from src.general.singleton import Singleton
-
 class EventListener():
     def __init__(self, id: int, func: Callable):
         self.id = id
@@ -11,7 +9,7 @@ class EventListener():
     def run(self, event: pygame.event.Event):
         self.func(event)
 
-class EventHandler(metaclass=Singleton):
+class EventHandler():
     def __init__(self):
         self.listeners: dict[int, list[EventListener]] = {}
         self.id_counter = 0
@@ -42,3 +40,5 @@ class EventHandler(metaclass=Singleton):
                     listener_arr.remove(listener)
                     return True
         return False
+
+event_handler = EventHandler()

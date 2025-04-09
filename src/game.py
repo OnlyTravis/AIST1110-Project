@@ -1,6 +1,6 @@
 import pygame
 
-from src.event import EventHandler
+from game.event import EventHandler
 from src.options import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 
 class Game:
