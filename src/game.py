@@ -3,7 +3,7 @@ import pygame
 from src.games.event import event_handler
 from src.games.scene import Scene
 from src.scenes.title import TitleScreen
-from src.options import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 
 class Game:
     def __init__(self):

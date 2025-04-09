@@ -14,7 +14,7 @@ class TutorialScreen(Scene):
 
         # Init texts
         font_1 = font.Font(font.get_default_font(), 40)
-        self.title = font_1.render("Tutorial", True, "black")
+        self.title = font_1.render("Tutorial (WIP)", True, "black")
         self.tip =  font_1.render("Press Space to Start Game", True, "black")
 
     def draw(self):
@@ -28,6 +28,5 @@ class TutorialScreen(Scene):
         self.screen.blit(self.tip, tip_rect)
 
     def onKeyDown(self, event: event.Event):
-        print(event)
         if event.key == K_SPACE:
             self.exitTo(GameScene)

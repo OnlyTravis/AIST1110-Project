@@ -14,7 +14,7 @@ class TitleScreen(Scene):
 
         # Init texts
         font_1 = font.Font(font.get_default_font(), 40)
-        self.title = font_1.render("Title Screen", True, "black")
+        self.title = font_1.render("Title Screen (WIP)", True, "black")
         self.tip =  font_1.render("Press Space to Start", True, "black")
         self.tip_position = 0
         self.tip_velocity = 0
@@ -39,6 +39,5 @@ class TitleScreen(Scene):
             self.tip_direction = 1 
 
     def onKeyDown(self, event: event.Event):
-        print(event)
         if event.key == K_SPACE:
             self.exitTo(TutorialScreen)

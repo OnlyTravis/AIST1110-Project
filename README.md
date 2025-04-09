@@ -6,10 +6,12 @@ Travis Doing Task:
 
 ## To-do list : 
 - TitleScreen Design
-- A manager class for saving data (e.g. not showing tutorial screen again, highscore...)
 - TutorialScreen Design (Maybe after the game is finished)
-- GameObject
-- Player
+- A manager class for saving data (e.g. not showing tutorial screen again, highscore...)
+- Player Class
+- Letter Class
+- Conveyor Class
+- Word Submit Area thing class
 
 ## Finished :
 - EventHandler Class
