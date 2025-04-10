@@ -1,9 +1,9 @@
 import pygame
 
-from src.games.event import event_handler
-from src.games.scene import Scene
+from src.classes.event import event_handler
+from src.classes.scene import Scene
 from src.scenes.title import TitleScreen
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
+from src.constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 
 class Game:
     def __init__(self):
@@ -16,18 +16,19 @@ class Game:
         self.scene = TitleScreen(self.screen, self.changeScene)
         
         # 3. Add quit listener
-        event_handler.addListener(pygame.QUIT, pygame.quit)
+        event_handler.add_listener(pygame.QUIT, pygame.quit)
 
     def run(self):
+        dt = 0
         while (True):
             for event in pygame.event.get():
                 event_handler.handle_event(event)
 
             self.scene.draw()
-            self.scene.update()
+            self.scene.update(dt)
 
             pygame.display.flip()
-            self.clock.tick(FPS)
+            dt = self.clock.tick(FPS) / 1000
     
     def changeScene(self, SceneClass):
         self.scene = SceneClass(self.screen, self.changeScene)

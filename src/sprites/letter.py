@@ -1,11 +1,11 @@
 from pygame import font, draw
-from pygame.sprite import Sprite
 from pygame.surface import Surface
 from math import dist
 
+from src.classes.game_object import GameObject
 from src.constants import DETECT_DISTANCE
 
-class Letter(Sprite):
+class Letter(GameObject):
     def __init__(self,
                  chr: str,
                  x: float,

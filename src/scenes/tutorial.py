@@ -1,15 +1,15 @@
 from collections.abc import Callable
 from pygame import KEYDOWN, K_SPACE, event, surface, font
 
-from src.games.scene import Scene
-from src.games.event import event_handler
-from src.scenes.game import GameScene
+from src.classes.scene import Scene
+from src.classes.event import event_handler
+from src.scenes.game import GameScreen
 
 class TutorialScreen(Scene):
     def __init__(self, screen: surface.Surface, toScene: Callable):
         super().__init__(screen, toScene)
 
-        listener_id = event_handler.addListener(KEYDOWN, self.onKeyDown)
+        listener_id = event_handler.add_listener(KEYDOWN, self.onKeyDown)
         self.listeners.append(listener_id)
 
         # Init texts
@@ -29,4 +29,4 @@ class TutorialScreen(Scene):
 
     def onKeyDown(self, event: event.Event):
         if event.key == K_SPACE:
-            self.exitTo(GameScene)
+            self.exitTo(GameScreen)
