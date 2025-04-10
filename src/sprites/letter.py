@@ -1,9 +1,9 @@
 from pygame import font, draw
 from pygame.surface import Surface
-from math import dist
 
+from src.classes.state import Gamemode
 from src.classes.game_object import GameObject
-from src.constants import DETECT_DISTANCE
+from src.constants import INTERACT_DISTANCE
 
 class Letter(GameObject):
     def __init__(self,
@@ -11,30 +11,36 @@ class Letter(GameObject):
                  x: float,
                  y: float,
                  size=45,
-                 disabled=False):
-        super().__init__()
+                 interactable=True):
+        super().__init__(x, y, interactable)
         self.chr = chr
         self.size = size
-        self.x = x
-        self.y = y
         self.is_near_player = False  # Different display when near player
-        self.disabled = disabled  # For displaying in hand
         self.init_display()
     
     def init_display(self):
         chr_font = font.Font(font.get_default_font(), self.size-2)
         self.chr_text = chr_font.render(self.chr, True, "white")
-        self.chr_rect = self.chr_text.get_rect(center=(self.x, self.y))
+    
+    def clone(self) -> "Letter":
+        clone = self.__class__(self.chr, self.x, self.y, self.size, self.interactable)
+        return clone
 
     def draw(self, screen: Surface):
         rect = (self.x-self.size/2, self.y-self.size/2, self.size, self.size)
         
-        if self.is_near_player and not self.disabled:
+        if self.is_near_player and self.interactable:
             draw.rect(screen, "red", rect)
         else:
             draw.rect(screen, "black", rect)
-        screen.blit(self.chr_text, self.chr_rect)
+        chr_rect = self.chr_text.get_rect(center=(self.x, self.y))
+        screen.blit(self.chr_text, chr_rect)
     
-    def check_is_near(self, player_x, player_y):
-        d = dist((self.x, self.y), (player_x, player_y))
-        self.is_near_player = (d >= DETECT_DISTANCE)
+    def update(self, state, dt):
+        # 1. Check if near any player
+        self.is_near_player = (self.distance_to(state.player1_pos) < INTERACT_DISTANCE)
+        if not self.is_near_player and state.gamemode == Gamemode.LocalMultiplayer:
+            self.is_near_player = (self.distance_to(state.player2_pos) < INTERACT_DISTANCE)
+        
+        # 2. todo: animation update
+        pass
