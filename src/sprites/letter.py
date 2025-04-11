@@ -1,5 +1,7 @@
 from pygame import font, draw
 from pygame.surface import Surface
+from string import ascii_uppercase
+from random import choice
 
 from src.classes.state import Gamemode
 from src.classes.game_object import GameObject
@@ -17,6 +19,10 @@ class Letter(GameObject):
         self.size = size
         self.is_near_player = False  # Different display when near player
         self.init_display()
+    
+    @classmethod
+    def random(cls, x: float, y: float, size=45, interactable=True):
+        return cls(choice(ascii_uppercase), x, y, size, interactable)
     
     def init_display(self):
         chr_font = font.Font(font.get_default_font(), self.size-2)

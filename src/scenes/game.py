@@ -3,6 +3,7 @@ from pygame.sprite import Group
 from pygame.event import Event
 from pygame import surface, key, KEYDOWN, K_w, K_a, K_s, K_d, K_e
 
+from src.sprites.conveyor import ConveyorBelt
 from src.classes.state import GameState, Gamemode
 from src.classes.scene import Scene
 from src.sprites.letter import Letter
@@ -20,6 +21,7 @@ class GameScreen(Scene):
     def _init_objects(self):
         self.objs = Group()
         self.objs.add(Letter("A", 100, 200))
+        self.objs.add(ConveyorBelt(100, 100, 300, False))
         self.player1 = HumanPlayer(400, 400, True)
 
     def _init_game_state(self):
