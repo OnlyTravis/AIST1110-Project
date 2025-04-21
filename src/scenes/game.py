@@ -42,6 +42,10 @@ class GameScreen(Scene):
         self.player1.draw(self.screen)
 
     def update(self, dt):
+        # Reset near state
+        self.state.player1_near = None
+        self.state.player2_near = None
+
         for obj in self.objs.sprites():
             obj.update(self.state, dt)
         self.player1.update(self.state, dt)
