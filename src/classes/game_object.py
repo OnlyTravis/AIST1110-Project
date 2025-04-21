@@ -1,19 +1,28 @@
 from collections.abc import Callable
-from typing import Self
 from math import dist
-from pygame.sprite import Sprite
+from pygame.sprite import Sprite, Group
 from pygame.event import Event, EventType
 
 from src.classes.state import GameState
 from src.classes.event import event_handler
 
 class GameObject(Sprite):
-    def __init__(self, x, y, interactable: bool):
+    def __init__(self, 
+                 x, 
+                 y, 
+                 interactable=False,
+                 recursive=False):
+        """
+        interactable: Object can be interacted with "E" presses
+        recursive: Object contains other objects
+        """
         super().__init__()
         self.listeners: list[int] = []
         self.x = x
         self.y = y
         self.interactable = interactable
+        self.recursive = recursive
+        self.inner_objects = Group()
 
     def draw(self):
         pass

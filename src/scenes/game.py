@@ -20,7 +20,6 @@ class GameScreen(Scene):
 
     def _init_objects(self):
         self.objs = Group()
-        self.objs.add(Letter("A", 100, 200))
         self.objs.add(ConveyorBelt(100, 100, 300, False))
         self.player1 = HumanPlayer(400, 400, True)
 
@@ -33,7 +32,7 @@ class GameScreen(Scene):
         Handles KEYDOWN events (e.g. interact, menu_open...)
         """
         if event.key == K_e:
-            self.player1.check_interact(self.objs)
+            self.player1.check_interact(self.objs.sprites())
 
     def draw(self):
         self.screen.fill("white")

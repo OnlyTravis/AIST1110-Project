@@ -15,16 +15,20 @@ class Letter(GameObject):
                  size=45,
                  interactable=True):
         super().__init__(x, y, interactable)
-        self.chr = chr
         self.size = size
         self.is_near_player = False  # Different display when near player
-        self.init_display()
+        self.set_char(chr)
     
     @classmethod
     def random(cls, x: float, y: float, size=45, interactable=True):
+        """
+        Creates a Letter Object with random attributes.
+        (e.g. Character, Score[if we add later])
+        """
         return cls(choice(ascii_uppercase), x, y, size, interactable)
     
-    def init_display(self):
+    def set_char(self, chr: str):
+        self.chr = chr
         chr_font = font.Font(font.get_default_font(), self.size-2)
         self.chr_text = chr_font.render(self.chr, True, "white")
     

@@ -12,7 +12,7 @@ class Player(GameObject):
         self.speed: float = 300
         self.is_p1: bool = is_p1
         self.is_holding: bool = False
-        self.holding = None
+        self.holding: Letter = None
     
     def draw(self, screen: Surface):
         # 1. Draw Player
@@ -44,17 +44,26 @@ class Player(GameObject):
         else:
             state.player2_pos = self.pos
 
-    def check_interact(self, objs: list[GameObject]):
+    def check_interact(self, objs: list[GameObject]) -> bool:
         """
         Checks if any object is at interactable distance.
         If yes, interact with said object
         """
         for obj in objs:
+            # 1. Check for GameObjects that contains other GameObjects
+            if obj.recursive:
+                if (self.check_interact(obj.inner_objects.sprites())):
+                    return
+
+            # 2. Check if GameObject is interactable
             if obj.interactable == False:
                 continue
 
+            # 3. Check if GameObject is within interactable distance
             if self.distance_to(obj.pos) < INTERACT_DISTANCE:
                 self.interact(obj)
+                return True
+        return False
     
     def interact(self, obj: GameObject):
         """
@@ -64,7 +73,9 @@ class Player(GameObject):
         if isinstance(obj, Letter):
             if self.is_holding:
                 # Swap Holding with the one on conveyor belt
-                pass # Todo: swap holding and letter on conveyor
+                tmp = obj.chr
+                obj.set_char(self.holding.chr)
+                self.holding.set_char(tmp)
             else:
                 # Picks up a Letter from conveyor belt
                 self.holding = obj.clone()
