@@ -3,6 +3,7 @@ from pygame import image, Surface, Rect, transform, SRCALPHA
 
 class Images(Enum):
     TrashCan = "assets/trash_can.png"
+    Letter = "assets/letter.png"
 
 class ImageLoader:
     _images: dict[Images, Surface] = {}
@@ -35,5 +36,8 @@ class ImageLoader:
 
     @classmethod
     def get(cls, name: Images) -> Surface:
+        """
+        Fetchs Image corresponding to Images enum
+        """
         assert not name in cls._images.keys()
         return cls._images[name]

@@ -59,7 +59,7 @@ class Player(GameObject):
                 # Picks up a Letter from conveyor belt
                 self.holding = obj.clone()
                 self.holding.interactable = False
-                self.holding.size = 35
+                self.holding.set_size(40)
                 self.is_holding = True
                 obj.kill()
             return

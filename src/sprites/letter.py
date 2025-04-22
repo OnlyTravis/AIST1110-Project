@@ -4,6 +4,7 @@ from string import ascii_uppercase
 from random import choice
 
 from src.classes.state import GameState
+from src.classes.images import ImageLoader, Images
 from src.classes.game_object import GameObject
 from src.constants import INTERACT_DISTANCE
 
@@ -16,6 +17,7 @@ class Letter(GameObject):
                  interactable=True):
         super().__init__(x, y, interactable)
         self.size = size
+        self.frames = ImageLoader.get_frames(Images.Letter, 32, self.size, self.size)
         self.set_char(chr)
     
     @classmethod
@@ -31,8 +33,16 @@ class Letter(GameObject):
         Sets Displayed Letter to 'chr'.
         """
         self.chr = chr
-        chr_font = font.Font(font.get_default_font(), self.size-2)
+        chr_font = font.Font(font.get_default_font(), round(self.size*0.5))
         self.chr_text = chr_font.render(self.chr, True, "white")
+    
+    def set_size(self, size: int):
+        """
+        Sets The Size of the Letter Object
+        """
+        self.size = size
+        self.frames = ImageLoader.get_frames(Images.Letter, 32, self.size, self.size)
+        self.set_char(self.chr)
     
     def clone(self) -> "Letter":
         """
@@ -42,15 +52,15 @@ class Letter(GameObject):
         return clone
 
     def draw(self, screen: Surface, state: GameState):
-        rect = (self.x-self.size/2, self.y-self.size/2, self.size, self.size)
+        pos = (self.x-self.size/2, self.y-self.size/2)
         
         if state.player1_near == self:
-            draw.rect(screen, "red", rect)
+            screen.blit(self.frames[1], pos)
         elif state.player2_near == self:
-            draw.rect(screen, "blue", rect)
+            screen.blit(self.frames[2], pos)
         else:
-            draw.rect(screen, "black", rect)
-        chr_rect = self.chr_text.get_rect(center=(self.x, self.y))
+            screen.blit(self.frames[0], pos)
+        chr_rect = self.chr_text.get_rect(center=(self.x-self.size*0.1, self.y-self.size*0.15))
         screen.blit(self.chr_text, chr_rect)
     
     def update(self, state: GameState, dt):

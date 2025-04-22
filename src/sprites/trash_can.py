@@ -14,6 +14,8 @@ class TrashCan(GameObject):
         half = self.size / 2
         if state.player1_near == self:
             screen.blit(self.frames[1], (self.x-half, self.y-half))
+        elif state.player2_near == self:
+            screen.blit(self.frames[2], (self.x-half, self.y-half))
         else:
             screen.blit(self.frames[0], (self.x-half, self.y-half))
 
