@@ -9,6 +9,7 @@ from src.classes.scene import Scene
 from src.sprites.human_player import HumanPlayer
 from src.sprites.conveyor import ConveyorBelt
 from src.sprites.trash_can import TrashCan
+from src.sprites.submit_area import SubmitArea
 from src.constants import INTERACT_DISTANCE
 
 class GameScreen(Scene):
@@ -24,6 +25,7 @@ class GameScreen(Scene):
         self.objs = Group()
         self.objs.add(ConveyorBelt(100, 100, 300, False))
         self.objs.add(TrashCan(200, 100))
+        self.objs.add(SubmitArea(500, 100, 200))
         self.player1 = HumanPlayer(400, 400, True)
         self.player2 = HumanPlayer(500, 400, False)
 

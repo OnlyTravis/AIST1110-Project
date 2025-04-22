@@ -5,7 +5,6 @@ from pygame import draw, Vector2
 
 from src.classes.state import GameState
 from src.classes.game_object import GameObject
-from src.sprites.trash_can import TrashCan
 from src.sprites.letter import Letter
 
 class Player(GameObject):
@@ -53,7 +52,12 @@ class Player(GameObject):
         if self.is_holding == is_holding:
             return
 
+        if not is_holding:
+            self.holding.kill()
+            self.holding = None
+
         self.is_holding = is_holding
+
         if self.is_p1:
             state.player1_is_holding = is_holding
         else:

@@ -19,6 +19,7 @@ class Letter(GameObject):
         super().__init__(x, y, interactable)
         self.size = size
         self.frames = ImageLoader.get_frames(Images.Letter, 32, self.size, self.size)
+        self.chr = ""
         self.set_char(chr)
     
     @classmethod
@@ -31,8 +32,11 @@ class Letter(GameObject):
     
     def set_char(self, chr: str):
         """
-        Sets Displayed Letter to 'chr'.
+        Sets Displayed Letter to chr.
         """
+        if self.chr == chr:
+            return
+
         self.chr = chr
         chr_font = font.Font(font.get_default_font(), round(self.size*0.5))
         self.chr_text = chr_font.render(self.chr, True, "white")
@@ -43,7 +47,8 @@ class Letter(GameObject):
         """
         self.size = size
         self.frames = ImageLoader.get_frames(Images.Letter, 32, self.size, self.size)
-        self.set_char(self.chr)
+        chr_font = font.Font(font.get_default_font(), round(self.size*0.5))
+        self.chr_text = chr_font.render(self.chr, True, "white")
     
     def clone(self) -> "Letter":
         """
@@ -72,8 +77,8 @@ class Letter(GameObject):
         if player.is_holding:
             # Swap Holding with the one on conveyor belt
             tmp = self.chr
-            self.set_char(self.holding.chr)
-            self.holding.set_char(tmp)
+            self.set_char(player.holding.chr)
+            player.holding.set_char(tmp)
         else:
             # Picks up a Letter from conveyor belt
             player.holding = self.clone()

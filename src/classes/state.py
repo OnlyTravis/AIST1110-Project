@@ -11,8 +11,8 @@ class GameState():
         self._p2_pos: tuple = (-1, -1)
         self._p1_near = None
         self._p2_near = None
-        self._p1_is_holding = None
-        self._p2_is_holding = None
+        self._p1_is_holding = False
+        self._p2_is_holding = False
         self._gamemode: Gamemode = Gamemode.SinglePlayer
     
     @property

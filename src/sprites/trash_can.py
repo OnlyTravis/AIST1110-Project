@@ -3,6 +3,7 @@ from pygame.surface import Surface
 from src.classes.state import GameState
 from src.classes.images import ImageLoader, Images
 from src.classes.game_object import GameObject
+from src.sprites.player import Player
 
 class TrashCan(GameObject):
     def __init__(self, x, y, size=60):
@@ -22,10 +23,8 @@ class TrashCan(GameObject):
     def update(self, state, dt):
         pass
 
-    def on_interact(self, player, state: GameState):
+    def on_interact(self, player: Player, state: GameState):
         if not player.is_holding:
             return
             
-        player.holding.kill()
-        player.holding = None
         player.set_holding(state, False)

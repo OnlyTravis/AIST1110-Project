@@ -6,11 +6,10 @@ Travis Doing Task:
 
 # To-do list : 
 ## Coding :
+- Fix Interactable distance with SubmitArea
 - TitleScreen Design
 - TutorialScreen Design (Maybe after the game is finished)
 - A manager class for saving data (e.g. not showing tutorial screen again, highscore...)
-- Word Submit Area thing class
- - Allow player to place letter onto the area
 ## Designs :
 - Game Background
 - Conveyor Design
