@@ -1,13 +1,14 @@
 from collections.abc import Callable
 from pygame.sprite import Group
 from pygame.event import Event
-from pygame import surface, key, KEYDOWN, K_w, K_a, K_s, K_d, K_e
+from pygame import surface, KEYDOWN
 
 from src.classes.game_object import GameObject
 from src.classes.state import GameState, Gamemode
 from src.classes.scene import Scene
 from src.sprites.human_player import HumanPlayer
 from src.sprites.conveyor import ConveyorBelt
+from src.constants import INTERACT_DISTANCE
 
 class GameScreen(Scene):
     def __init__(self, screen: surface.Surface, toScene: Callable):
@@ -31,8 +32,7 @@ class GameScreen(Scene):
         """
         Handles KEYDOWN events (e.g. interact, menu_open...)
         """
-        if event.key == K_e:
-            self.player1.check_interact(self.objs.sprites())
+        pass
 
     def draw(self):
         self.screen.fill("white")
@@ -77,5 +77,10 @@ class GameScreen(Scene):
                 d2 = obj.distance_to(self.state.player2_pos)
                 if d2 < closest2[0]:
                     closest2 = (d2, obj)
+            return [closest1, closest2]
         
-        check_group(objs)
+        closest1, closest2 = check_group(objs)
+        if closest1[0] < INTERACT_DISTANCE:
+            self.state.player1_near = closest1[1]
+        if closest2[0] < INTERACT_DISTANCE:
+            self.state.player2_near = closest2[1]

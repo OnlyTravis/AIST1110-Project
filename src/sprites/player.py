@@ -20,7 +20,7 @@ class Player(GameObject):
 
         # 2. Draw Holding Object
         if self.holding != None:
-            self.holding.draw(screen)
+            self.holding.draw(screen, state)
     
     def walk(self, state: GameState, x_dir: int, y_dir: int, dt: float):
         """
@@ -43,27 +43,6 @@ class Player(GameObject):
             state.player1_pos = self.pos
         else:
             state.player2_pos = self.pos
-
-    def check_interact(self, objs: list[GameObject]) -> bool:
-        """
-        Checks if any object is at interactable distance.
-        If yes, interact with said object
-        """
-        for obj in objs:
-            # 1. Check for GameObjects that contains other GameObjects
-            if obj.recursive:
-                if (self.check_interact(obj.inner_objects.sprites())):
-                    return
-
-            # 2. Check if GameObject is interactable
-            if obj.interactable == False:
-                continue
-
-            # 3. Check if GameObject is within interactable distance
-            if self.distance_to(obj.pos) < INTERACT_DISTANCE:
-                self.interact(obj)
-                return True
-        return False
     
     def interact(self, obj: GameObject):
         """

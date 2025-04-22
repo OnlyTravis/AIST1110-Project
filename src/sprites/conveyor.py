@@ -41,7 +41,7 @@ class ConveyorBelt(GameObject):
         
         # 2. Draw Letters
         for letter in self.inner_objects.sprites():
-            letter.draw(screen)
+            letter.draw(screen, state)
 
     def update(self, state: GameState, dt: float):
         # 1. Update conveyor animation

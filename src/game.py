@@ -9,7 +9,6 @@ class Game:
     def __init__(self):
         # 1. Init pygame
         pygame.init()
-        ImageLoader.load_images()
 
         # 2. Set up
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -18,6 +17,9 @@ class Game:
         
         # 3. Add quit listener
         event_handler.add_listener(pygame.QUIT, pygame.quit)
+
+        # 4. Load Assets
+        ImageLoader.load_images()
 
     def run(self):
         dt = 0
