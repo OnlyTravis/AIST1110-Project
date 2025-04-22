@@ -14,7 +14,7 @@ class Player(GameObject):
         self.is_holding: bool = False
         self.holding: Letter = None
     
-    def draw(self, screen: Surface):
+    def draw(self, screen: Surface, state: GameState):
         # 1. Draw Player
         draw.circle(screen, "red", (self.x, self.y), 10)
 

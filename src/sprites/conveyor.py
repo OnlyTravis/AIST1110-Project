@@ -21,7 +21,7 @@ class ConveyorBelt(GameObject):
         self.is_forward = is_forward
         self._animation_tick = 0
     
-    def draw(self, screen: Surface):
+    def draw(self, screen: Surface, state: GameState):
         # 1.1 Draw Border
         if self.is_horizontal:
             draw.rect(screen, "black", Rect(self.x, self.y-25, self.length, 50))

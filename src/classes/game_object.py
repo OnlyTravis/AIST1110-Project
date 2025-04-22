@@ -24,23 +24,12 @@ class GameObject(Sprite):
         self.interactable = interactable
         self.recursive = recursive
         self.inner_objects = Group()
-        self.near_player = 0  # 0: not near player, 1: near p1, 2: near p2, 3: near both
 
     def draw(self):
         pass
 
-    def update(self, state: GameState, dt: float):
-        if self.interactable:
-            self.near_player = 0
-            if state.player1_near == None and self.distance_to(state.player1_pos) < INTERACT_DISTANCE:
-                self.near_player += 1
-                state.player1_near = self
-            if (state.player2_near == None and 
-                    state.gamemode == Gamemode.LocalMultiplayer and
-                    self.distance_to(state.player1_pos) < INTERACT_DISTANCE):
-                self.near_player += 2
-                state.player2_near = self
-
+    def update(self):
+        pass
 
     def move(self, dx: float, dy: float):
         """

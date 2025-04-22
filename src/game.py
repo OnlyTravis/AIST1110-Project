@@ -1,7 +1,7 @@
 import pygame
 
 from src.classes.event import event_handler
-from src.classes.scene import Scene
+from src.classes.images import ImageLoader
 from src.scenes.title import TitleScreen
 from src.constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 
@@ -9,6 +9,7 @@ class Game:
     def __init__(self):
         # 1. Init pygame
         pygame.init()
+        ImageLoader.load_images()
 
         # 2. Set up
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))

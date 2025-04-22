@@ -3,7 +3,7 @@ from pygame.surface import Surface
 from string import ascii_uppercase
 from random import choice
 
-from src.classes.state import Gamemode
+from src.classes.state import GameState
 from src.classes.game_object import GameObject
 from src.constants import INTERACT_DISTANCE
 
@@ -41,18 +41,18 @@ class Letter(GameObject):
         clone = self.__class__(self.chr, self.x, self.y, self.size, self.interactable)
         return clone
 
-    def draw(self, screen: Surface):
+    def draw(self, screen: Surface, state: GameState):
         rect = (self.x-self.size/2, self.y-self.size/2, self.size, self.size)
         
-        if self.near_player != 0:
+        if state.player1_near == self:
             draw.rect(screen, "red", rect)
+        elif state.player2_near == self:
+            draw.rect(screen, "blue", rect)
         else:
             draw.rect(screen, "black", rect)
         chr_rect = self.chr_text.get_rect(center=(self.x, self.y))
         screen.blit(self.chr_text, chr_rect)
     
-    def update(self, state, dt):
-        super().update(state, dt)
-        
+    def update(self, state: GameState, dt):
         # 2. todo: animation update
         pass
