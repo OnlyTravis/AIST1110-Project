@@ -8,6 +8,7 @@ from src.classes.state import GameState, Gamemode
 from src.classes.scene import Scene
 from src.sprites.human_player import HumanPlayer
 from src.sprites.conveyor import ConveyorBelt
+from src.sprites.trash_can import TrashCan
 from src.constants import INTERACT_DISTANCE
 
 class GameScreen(Scene):
@@ -22,6 +23,7 @@ class GameScreen(Scene):
     def _init_objects(self):
         self.objs = Group()
         self.objs.add(ConveyorBelt(100, 100, 300, False))
+        self.objs.add(TrashCan(200, 100))
         self.player1 = HumanPlayer(400, 400, True)
 
     def _init_game_state(self):

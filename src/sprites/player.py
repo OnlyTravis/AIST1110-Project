@@ -1,10 +1,10 @@
 from pygame.surface import Surface
 from pygame import draw, Vector2
 
-from src.sprites.letter import Letter
 from src.classes.state import GameState
 from src.classes.game_object import GameObject
-from src.constants import INTERACT_DISTANCE
+from src.sprites.trash_can import TrashCan
+from src.sprites.letter import Letter
 
 class Player(GameObject):
     def __init__(self, x: float, y: float, is_p1: bool):
@@ -62,4 +62,13 @@ class Player(GameObject):
                 self.holding.size = 35
                 self.is_holding = True
                 obj.kill()
-        # Todo: Trashcan
+            return
+        
+        if isinstance(obj, TrashCan):
+            if not self.is_holding:
+                return
+            
+            self.holding.kill()
+            self.holding = None
+            self.is_holding = False
+        

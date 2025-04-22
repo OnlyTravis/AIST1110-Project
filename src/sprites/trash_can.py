@@ -5,10 +5,10 @@ from src.classes.images import ImageLoader, Images
 from src.classes.game_object import GameObject
 
 class TrashCan(GameObject):
-    def __init__(self, x, y, size=50):
+    def __init__(self, x, y, size=60):
         super().__init__(x, y, True)
         self.size = size
-        self.frames = ImageLoader.get_frames(Images.TrashCan, 32, 50, 50)
+        self.frames = ImageLoader.get_frames(Images.TrashCan, 32, self.size, self.size)
     
     def draw(self, screen: Surface, state: GameState):
         half = self.size / 2
