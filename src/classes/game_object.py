@@ -11,10 +11,10 @@ class GameObject(Sprite):
     def __init__(self, 
                  x, 
                  y, 
-                 interactable=False,
+                 interactable=0,
                  recursive=False):
         """
-        interactable: Object can be interacted with "E" presses
+        interactable: (0: not interactable), (1: p1), (2: p2), (3: p1 & p2)
         recursive: Object contains other objects
         """
         super().__init__()
@@ -29,6 +29,9 @@ class GameObject(Sprite):
         pass
 
     def update(self):
+        pass
+
+    def on_interact(self, player, state: GameState):
         pass
 
     def move(self, dx: float, dy: float):
@@ -62,6 +65,9 @@ class GameObject(Sprite):
     def kill(self):
         for listener_id in self.listeners:
             event_handler.remove_listener(listener_id)
+        if self.recursive:
+            for obj in self.inner_objects.sprites():
+                obj.kill()
         super().kill()
     
     @property
@@ -72,3 +78,11 @@ class GameObject(Sprite):
     def pos(self, new_pos):
         self.x = new_pos[0]
         self.y = new_pos[1]
+
+    @property
+    def can_interact_with_p1(self):
+        return self.interactable == 1 or self.interactable == 3
+    
+    @property
+    def can_interact_with_p2(self):
+        return self.interactable == 2 or self.interactable == 3

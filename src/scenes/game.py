@@ -25,10 +25,11 @@ class GameScreen(Scene):
         self.objs.add(ConveyorBelt(100, 100, 300, False))
         self.objs.add(TrashCan(200, 100))
         self.player1 = HumanPlayer(400, 400, True)
+        self.player2 = HumanPlayer(500, 400, False)
 
     def _init_game_state(self):
         self.state.player1_pos = (self.player1.x, self.player1.y)
-        self.state.gamemode = Gamemode.SinglePlayer # Add change gamemode later
+        self.state.gamemode = Gamemode.LocalMultiplayer # Add change gamemode later
 
     def _handle_key_down(self, event: Event):
         """
@@ -42,6 +43,7 @@ class GameScreen(Scene):
         for obj in self.objs.sprites():
             obj.draw(self.screen, self.state)
         self.player1.draw(self.screen, self.state)
+        self.player2.draw(self.screen, self.state)
 
     def update(self, dt):
         self._check_player_near(self.objs.sprites())
@@ -49,8 +51,12 @@ class GameScreen(Scene):
         for obj in self.objs.sprites():
             obj.update(self.state, dt)
         self.player1.update(self.state, dt)
+        self.player2.update(self.state, dt)
     
     def _check_player_near(self, objs):
+        """
+        Updates player1_near & player2_near state
+        """
         self.state.player1_near = None
         self.state.player2_near = None
 
@@ -66,19 +72,18 @@ class GameScreen(Scene):
                         closest2 = closest[1]
                     
 
-                if not obj.interactable:
-                    continue
-                
-                d1 = obj.distance_to(self.state.player1_pos)
-                if d1 < closest1[0]:
-                    closest1 = (d1, obj)
+                if obj.can_interact_with_p1:
+                    d1 = obj.distance_to(self.state.player1_pos)
+                    if d1 < closest1[0]:
+                        closest1 = (d1, obj)
 
                 if self.state.gamemode != Gamemode.LocalMultiplayer:
                     continue
 
-                d2 = obj.distance_to(self.state.player2_pos)
-                if d2 < closest2[0]:
-                    closest2 = (d2, obj)
+                if obj.can_interact_with_p2:
+                    d2 = obj.distance_to(self.state.player2_pos)
+                    if d2 < closest2[0]:
+                        closest2 = (d2, obj)
             return [closest1, closest2]
         
         closest1, closest2 = check_group(objs)

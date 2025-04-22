@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pygame.surface import Surface
 from pygame import draw, Vector2
 
@@ -8,7 +10,7 @@ from src.sprites.letter import Letter
 
 class Player(GameObject):
     def __init__(self, x: float, y: float, is_p1: bool):
-        super().__init__(x, y, False)
+        super().__init__(x, y, 0)
         self.speed: float = 300
         self.is_p1: bool = is_p1
         self.is_holding: bool = False
@@ -16,7 +18,10 @@ class Player(GameObject):
     
     def draw(self, screen: Surface, state: GameState):
         # 1. Draw Player
-        draw.circle(screen, "red", (self.x, self.y), 10)
+        if self.is_p1:
+            draw.circle(screen, "red", (self.x, self.y), 10)
+        else:
+            draw.circle(screen, "blue", (self.x, self.y), 10)
 
         # 2. Draw Holding Object
         if self.holding != None:
@@ -44,31 +49,19 @@ class Player(GameObject):
         else:
             state.player2_pos = self.pos
     
-    def interact(self, obj: GameObject):
+    def set_holding(self, state: GameState, is_holding: bool):
+        if self.is_holding == is_holding:
+            return
+
+        self.is_holding = is_holding
+        if self.is_p1:
+            state.player1_is_holding = is_holding
+        else:
+            state.player2_is_holding = is_holding
+    
+    def interact(self, state: GameState, obj: GameObject):
         """
         Interacts with a interactable object
         (e.g. Picking up a Letter, Trashing holding Letter...)
         """
-        if isinstance(obj, Letter):
-            if self.is_holding:
-                # Swap Holding with the one on conveyor belt
-                tmp = obj.chr
-                obj.set_char(self.holding.chr)
-                self.holding.set_char(tmp)
-            else:
-                # Picks up a Letter from conveyor belt
-                self.holding = obj.clone()
-                self.holding.interactable = False
-                self.holding.set_size(40)
-                self.is_holding = True
-                obj.kill()
-            return
-        
-        if isinstance(obj, TrashCan):
-            if not self.is_holding:
-                return
-            
-            self.holding.kill()
-            self.holding = None
-            self.is_holding = False
-        
+        obj.on_interact(self, state)   

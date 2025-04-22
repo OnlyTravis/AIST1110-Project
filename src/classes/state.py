@@ -7,43 +7,61 @@ class Gamemode(Enum):
 
 class GameState():
     def __init__(self):
-        self._player1_pos: tuple = (-1, -1)
-        self._player2_pos: tuple = (-1, -1)
-        self._player1_near = None
-        self._player2_near = None
+        self._p1_pos: tuple = (-1, -1)
+        self._p2_pos: tuple = (-1, -1)
+        self._p1_near = None
+        self._p2_near = None
+        self._p1_is_holding = None
+        self._p2_is_holding = None
         self._gamemode: Gamemode = Gamemode.SinglePlayer
     
     @property
     def player1_pos(self):
-        return self._player1_pos
+        return self._p1_pos
     
     @player1_pos.setter
     def player1_pos(self, pos: tuple):
-        self._player1_pos = pos
+        self._p1_pos = pos
     
     @property
     def player2_pos(self):
-        return self._player2_pos
+        return self._p2_pos
     
     @player2_pos.setter
     def player2_pos(self, pos: tuple):
-        self._player2_pos = pos
+        self._p2_pos = pos
     
     @property
     def player1_near(self):
-        return self._player1_near
+        return self._p1_near
     
     @player1_near.setter
     def player1_near(self, obj):
-        self._player1_near = obj
+        self._p1_near = obj
     
     @property
     def player2_near(self):
-        return self._player2_near
+        return self._p2_near
     
     @player2_near.setter
     def player2_near(self, obj):
-        self._player2_near = obj
+        self._p2_near = obj
+
+    @property
+    def player1_is_holding(self):
+        return self._p1_is_holding
+    
+    @player1_is_holding.setter
+    def player1_is_holding(self, value: bool):
+        self._p1_is_holding = value
+    
+    @property
+    def player2_is_holding(self):
+        return self._p2_is_holding
+
+    @player2_is_holding.setter
+    def player2_is_holding(self, value: bool):
+        self._p2_is_holding = value
     
     @property
     def gamemode(self):

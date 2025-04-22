@@ -6,7 +6,7 @@ from src.classes.game_object import GameObject
 
 class TrashCan(GameObject):
     def __init__(self, x, y, size=60):
-        super().__init__(x, y, True)
+        super().__init__(x, y, 3)
         self.size = size
         self.frames = ImageLoader.get_frames(Images.TrashCan, 32, self.size, self.size)
     
@@ -21,3 +21,11 @@ class TrashCan(GameObject):
 
     def update(self, state, dt):
         pass
+
+    def on_interact(self, player, state: GameState):
+        if not player.is_holding:
+            return
+            
+        player.holding.kill()
+        player.holding = None
+        player.set_holding(state, False)
