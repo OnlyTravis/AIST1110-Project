@@ -1,3 +1,4 @@
+from math import dist
 from pygame import draw
 from pygame.surface import Surface
 
@@ -78,6 +79,22 @@ class SubmitArea(GameObject):
         self.interactable = 0
         self._update_letter_positions(state)
 
+    def distance_to(self, pos) -> float:
+        """
+        Overwrite distance_to as the area is a large object
+        """
+        half = self.width / 2
+        x1 = max(min(pos[0], self.x+half), self.x-half)
+        return dist((x1, self.y), pos)
+
+    
+    def get_word(self) -> str:
+        letters: list[Letter] = self.inner_objects.sprites()
+        text = "-" * len(letters)
+        for obj in letters:
+            text[obj.index] = obj.chr
+        return text
+
     def _get_ghost_pos(self, player_pos: tuple) -> int:
         """
         Gets Letter Ghosts position (For placing letters onto the area)
@@ -117,18 +134,14 @@ class SubmitArea(GameObject):
         Updates position of letters in self.inner_object according to
         if player can place letters on the area
         """
-        print("_update_letter_positions")
         if self.is_near_player and self.interactable:
             # Reserve Gap for Ghost Letter
-            print("Reserve Gap for Ghost Letter")
-            print(self.ghost_pos)
             letters: list[Letter] = self.inner_objects.sprites()
             start_x = self.x - 25*len(letters)
             for letter in letters:
                 x = start_x + letter.index*50
                 if letter.index >= self.ghost_pos:
                     x += 50
-
                 letter.move_to(x, self.y)
         else:
             # Ordinary Display
