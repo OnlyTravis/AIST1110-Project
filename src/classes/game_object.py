@@ -3,9 +3,8 @@ from math import dist
 from pygame.sprite import Sprite, Group
 from pygame.event import Event, EventType
 
-from src.constants import INTERACT_DISTANCE
-from src.classes.state import GameState, Gamemode
-from src.classes.event import event_handler
+from src.classes.state import GameState
+from src.classes.event import event_handler, GameEvent
 
 class GameObject(Sprite):
     def __init__(self, 
@@ -25,11 +24,15 @@ class GameObject(Sprite):
         self.recursive = recursive
         self.inner_objects = Group()
 
-    def draw(self):
-        pass
+    def draw(self, screen, state):
+        if self.recursive:
+            for obj in self.inner_objects.sprites():
+                obj.draw(screen, state)
 
-    def update(self):
-        pass
+    def update(self, state, dt):
+        if self.recursive:
+            for obj in self.inner_objects.sprites():
+                obj.update(state, dt)
 
     def on_interact(self, player, state: GameState):
         pass
@@ -54,7 +57,7 @@ class GameObject(Sprite):
         """
         return dist((self.x, self.y), pos)
 
-    def add_event_listener(self, event_type: EventType, func: Callable[[Event], None]):
+    def add_event_listener(self, event_type: EventType | GameEvent, func: Callable[[Event], None]):
         listener_id = event_handler.add_listener(event_type, func)
         self.listeners.append(listener_id)
     
@@ -75,7 +78,7 @@ class GameObject(Sprite):
         return (self.x, self.y)
 
     @pos.setter
-    def pos(self, new_pos):
+    def pos(self, new_pos: tuple[float, float]):
         self.x = new_pos[0]
         self.y = new_pos[1]
 

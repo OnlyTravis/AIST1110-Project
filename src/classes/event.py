@@ -1,5 +1,21 @@
+from enum import Enum
 from collections.abc import Callable
+
+from pygame import USEREVENT, event, time
 from pygame.event import Event, EventType
+
+class GameEvent(Enum):
+    GameStart = USEREVENT
+    UpdateQuestion = USEREVENT+1
+    GameEnd = USEREVENT+2
+
+    @classmethod
+    def post(cls, game_event: "GameEvent", dict: dict={}):
+        event.post(Event(game_event.value, **dict))
+
+    @classmethod
+    def set_timeout(cls, game_event: "GameEvent", miliseconds: int):
+        time.set_timer(game_event.value, miliseconds, 1)
 
 class EventListener():
     def __init__(self, id: int, func: Callable):
@@ -21,7 +37,10 @@ class EventHandler():
         for listener in self.listeners[event.type]:
             listener.run(event)
 
-    def add_listener(self, event_type: EventType, func: Callable[[Event], None]) -> int:
+    def add_listener(self, event_type: EventType | GameEvent, func: Callable[[Event], None]) -> int:
+        if isinstance(event_type, GameEvent):
+            event_type = event_type.value
+
         arr = self.listeners.setdefault(event_type, [])
         arr.append(EventListener(self.id_counter, func))
         self.id_counter += 1

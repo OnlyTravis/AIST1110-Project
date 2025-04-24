@@ -22,7 +22,8 @@ class SubmitArea(GameObject):
         self.width = width
         self.is_p1 = is_p1
         self.ghost_pos = -1
-        self.is_near_player = False  # To detect when player_near is changed and update display
+        self.is_near_player = False  # To detect when player_near is changed and update displays
+        self.letter_count = 0
     
     def draw(self, screen: Surface, state: GameState):
         half = self.width / 2
@@ -34,7 +35,10 @@ class SubmitArea(GameObject):
         if self.ghost_pos != -1:
             n = len(self.inner_objects.sprites())
             x = self.x - (n+1)*25 + self.ghost_pos*50
-            draw.rect(screen, "red", (x, self.y-20, 40, 40))
+            if self.is_p1:
+                draw.rect(screen, "red", (x, self.y-20, 40, 40))
+            else:
+                draw.rect(screen, "blue", (x, self.y-20, 40, 40))
 
     def update(self, state: GameState, dt: float):
         self._update_interactability(state)
@@ -73,6 +77,7 @@ class SubmitArea(GameObject):
             if obj.index >= self.ghost_pos:
                 obj.index += 1
         self.inner_objects.add(letter)
+        self.letter_count += 1
         self.ghost_pos = -1
 
         player.set_holding(state, False)
@@ -134,9 +139,21 @@ class SubmitArea(GameObject):
         Updates position of letters in self.inner_object according to
         if player can place letters on the area
         """
+        # 1. Check if any Letter is picked up. If yes, reorder indexes
+        letters: list[Letter] = self.inner_objects.sprites()
+        if len(letters) != self.letter_count:
+            self.letter_count = len(letters)
+            found = [False]*(len(letters)+1)
+            for letter in letters:
+                found[letter.index] = True
+            n = found.index(False)
+            for letter in letters:
+                if letter.index > n:
+                    letter.index -= 1
+
+        # 2. Update Letter Positions
         if self.is_near_player and self.interactable:
             # Reserve Gap for Ghost Letter
-            letters: list[Letter] = self.inner_objects.sprites()
             start_x = self.x - 25*len(letters)
             for letter in letters:
                 x = start_x + letter.index*50
@@ -145,7 +162,6 @@ class SubmitArea(GameObject):
                 letter.move_to(x, self.y)
         else:
             # Ordinary Display
-            letters: list[Letter] = self.inner_objects.sprites()
             start_x = self.x - 25*(len(letters)-1)
             for letter in letters:
                 letter.move_to(start_x + 50*letter.index, self.y)

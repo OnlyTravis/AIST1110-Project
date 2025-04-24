@@ -16,10 +16,12 @@ class ConveyorBelt(GameObject):
                  is_forward=True):
         super().__init__(x, y, 0, True)
         self.length: int = length
+        self.rate: float = 1.5
         self.speed: int = 3
         self.is_horizontal = is_horizontal
         self.is_forward = is_forward
         self._animation_tick = 0
+        self._time_since_new = 0
     
     def draw(self, screen: Surface, state: GameState):
         # 1.1 Draw Border
@@ -32,16 +34,17 @@ class ConveyorBelt(GameObject):
         
         # 1.2 Draw Conveyor segments
         l = 20*self._animation_tick
-        while l < self.length:
+        if not self.is_forward:
+            l = 20-l
+        while abs(l) < self.length:
             if self.is_horizontal:
                 draw.line(screen, "black", (self.x+l, self.y-20), (self.x+l, self.y+20))
             else:
                 draw.line(screen, "black", (self.x-20, self.y+l), (self.x+20, self.y+l))
             l += 20
         
-        # 2. Draw Letters
-        for letter in self.inner_objects.sprites():
-            letter.draw(screen, state)
+        # 2. Draw inner letters
+        super().draw(screen, state)
 
     def update(self, state: GameState, dt: float):
         # 1. Update conveyor animation
@@ -56,8 +59,12 @@ class ConveyorBelt(GameObject):
         for letter in self.inner_objects.sprites():
             letter.move(dx, dy)
 
-        # 3 Add / Remove Letters from belt
+        # 3 Remove & Add Letter to belt
         self._check_letters()
+        self._time_since_new += dt
+        if self._time_since_new > self.rate:
+            self._time_since_new -= self.rate
+            self._add_letter()
         
         # 4. Update Letter
         for letter in self.inner_objects.sprites():
@@ -70,34 +77,23 @@ class ConveyorBelt(GameObject):
         self.inner_objects.add(new_letter)
 
     def _check_letters(self):
-        # 1. Add Letter if none is on belt
-        if (len(self.inner_objects.sprites()) == 0):
-            self._add_letter()
-            return
-
-        # 2. Add/Remove Letters
         letters: list[Letter] = self.inner_objects.sprites()
+
+        if len(letters) == 0:
+            return
+        
         first = letters[0]
-        last = letters[len(letters)-1]
         if (self.is_forward):
             if (self.is_horizontal):
-                if (last.x - self.x > LETTER_SEPARATION):
-                    self._add_letter()
                 if (first.x > self.x + self.length):
                     first.kill()
             else:
-                if (last.y - self.y > LETTER_SEPARATION):
-                    self._add_letter()
                 if (first.y > self.y + self.length):
                     first.kill()
         else:
             if (self.is_horizontal):
-                if (self.x + self.length - last.x > LETTER_SEPARATION):
-                    self._add_letter()
                 if (first.x < self.x):
                     first.kill()
             else:
-                if (self.y + self.length - last.y > LETTER_SEPARATION):
-                    self._add_letter()
                 if (first.y < self.y):
                     first.kill()
