@@ -1,3 +1,5 @@
+from threading import Thread
+
 from src.classes.event import GameEvent, EventListener
 from src.classes.state import GameState, States
 from src.classes.gpt_api import GPTAPI
@@ -57,15 +59,15 @@ class GameManager(EventListener):
     def _fetch_question(self):
         self.waiting_question = True
 
-        # multithread later
-        question = GPTAPI.get_question()
-        if self.question == None:
-            self.question = question
-            GameEvent.UpdateQuestion.post({"question": question})
-        else:
-            self.question_buffer = question
-
-        self.waiting_question = False
+        def fetch_question():
+            question = GPTAPI.get_question()
+            if self.question == None:
+                self.question = question
+                GameEvent.UpdateQuestion.post({"question": question})
+            else:
+                self.question_buffer = question
+            self.waiting_question = False
+        Thread(target=fetch_question).start()
     
     def _on_submit(self, event):
         # 1. Check Word

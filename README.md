@@ -1,17 +1,18 @@
 # Group Project for AIST1110
 
-YL-36 Doing Task:
-
-Travis Doing Task:
-
 # To-do list : 
-## Coding :
-- Fix Interactable distance with SubmitArea
+- Bonus points based on word length (to balance out the game)
+- option screen before game start
+- Pause Screen
+- End Screen
+- annouce function in game scene
+- next question when all answered
+- score display
+
 - TitleScreen Design
 - TutorialScreen Design (Maybe after the game is finished)
 - A manager class for saving data (e.g. not showing tutorial screen again, highscore...)
-## Designs :
-- Game Background
-- Conveyor Design
-- Player Design
-- Letter Design...
+
+# Possible Ideas
+- Special Letters (reduces/increases conveyor speed of your opponent, bonus points, reduces timer)
+- Table to store letters

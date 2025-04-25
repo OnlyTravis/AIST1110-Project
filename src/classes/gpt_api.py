@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 import os
-from time import sleep
 
 from src.classes.data_classes import Question, Answer
 
@@ -58,25 +57,44 @@ tmp_questions = [
     ]),
 ]
 
+prompt = """
+Create 3 simple questions for a game similar to Family Feud.
+Each question should have 6 most popular answers and 
+the answers should be mostly in 1 word.
+You don't have to provide the numbers.
+Please provide the question and answers in the following format:
+1. <Question Text>
+<Answer 1>
+<Answer 2>...
+2. <Question Text>
+...
+"""
+
 # Things commented out to prevent wasting of api calls during coding / testing
 class GPTAPI():
     _client = None
-
     tmp_i = 0
 
     @classmethod
     def init_api(cls):
-        """
-        _client = AzureOpenAI(
+        cls._client = AzureOpenAI(
             azure_endpoint="https://cuhk-apip.azure-api.net",
             api_version="2024-02-01",  # Use appropriate version for your model
             api_key=AZURE_API_KEY
         )
-        """
 
     @classmethod
     def get_question(cls) -> Question:
         # todo implement api calls
-        #sleep(3)
+        response = cls._client.chat.completions.create(
+            model="gpt-4o",  # or "gpt-4o"
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,  # Control response creativity (0-1)
+        )
+        tr
+        print(response)
         cls.tmp_i += 1
         return tmp_questions[cls.tmp_i-1]

@@ -24,7 +24,7 @@ class GameScreen(Scene):
         super().__init__(screen, toScene)
 
         self.state = GameState()
-        self.manager = GameManager()
+        self.manager = GameManager(self.state)
         self._init_ui()
         self._init_objects()
         self._init_game_state()
