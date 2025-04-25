@@ -8,16 +8,33 @@ class GameEvent(Enum):
     GameStart = USEREVENT
     UpdateQuestion = USEREVENT+1
     GameEnd = USEREVENT+2
+    SubmitButtonPressed = USEREVENT+3  # On Submit Button Press
+    SubmitWord = USEREVENT+4  # Contains word from SubmitArea
+    SubmitStatus = USEREVENT+5  # After Checking submition
 
-    @classmethod
-    def post(cls, game_event: "GameEvent", dict: dict={}):
-        event.post(Event(game_event.value, **dict))
+    def post(self, dict: dict={}):
+        event.post(Event(self.value, **dict))
 
-    @classmethod
-    def set_timeout(cls, game_event: "GameEvent", miliseconds: int):
-        time.set_timer(game_event.value, miliseconds, 1)
+    def set_timeout(self, miliseconds: int, dict: dict={}):
+        time.set_timer(Event(self.value, **dict), miliseconds, 1)
 
 class EventListener():
+    def __init__(self):
+        self.listeners: list[int] = []
+
+    def add_event_listener(self, event_type: EventType | GameEvent, func: Callable[[Event], None]):
+        listener_id = event_handler.add_listener(event_type, func)
+        self.listeners.append(listener_id)
+    
+    def remove_event_listener(self, listener_id: int):
+        self.listeners.remove(listener_id)
+        event_handler.remove_listener(listener_id)
+    
+    def remove_all_listeners(self):
+        for listener_id in self.listeners:
+            event_handler.remove_listener(listener_id)
+
+class Listener():
     def __init__(self, id: int, func: Callable):
         self.id = id
         self.func = func
@@ -27,7 +44,7 @@ class EventListener():
 
 class EventHandler():
     def __init__(self):
-        self.listeners: dict[int, list[EventListener]] = {}
+        self.listeners: dict[int, list[Listener]] = {}
         self.id_counter = 0
 
     def handle_event(self, event: Event):
@@ -42,7 +59,7 @@ class EventHandler():
             event_type = event_type.value
 
         arr = self.listeners.setdefault(event_type, [])
-        arr.append(EventListener(self.id_counter, func))
+        arr.append(Listener(self.id_counter, func))
         self.id_counter += 1
         return self.id_counter - 1
     

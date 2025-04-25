@@ -4,6 +4,7 @@ from pygame.surface import Surface
 
 from src.classes.state import GameState
 from src.classes.game_object import GameObject
+from src.classes.event import GameEvent
 from src.sprites.player import Player
 from src.sprites.letter import Letter
 
@@ -24,6 +25,8 @@ class SubmitArea(GameObject):
         self.ghost_pos = -1
         self.is_near_player = False  # To detect when player_near is changed and update displays
         self.letter_count = 0
+        self.add_event_listener(GameEvent.SubmitButtonPressed, self._on_submit)
+        self.add_event_listener(GameEvent.SubmitStatus, self._after_submit)
     
     def draw(self, screen: Surface, state: GameState):
         half = self.width / 2
@@ -95,10 +98,27 @@ class SubmitArea(GameObject):
     
     def get_word(self) -> str:
         letters: list[Letter] = self.inner_objects.sprites()
-        text = "-" * len(letters)
+        text_arr = [""] * len(letters)
         for obj in letters:
-            text[obj.index] = obj.chr
-        return text
+            text_arr[obj.index] = obj.chr
+        return "".join(text_arr)
+
+    def _on_submit(self, event):
+        if event.is_p1 != self.is_p1:
+            return
+        
+        GameEvent.post(GameEvent.SubmitWord, {
+            "is_p1": self.is_p1,
+            "word": self.get_word()
+        })
+    
+    def _after_submit(self, event):
+        if event.is_p1 != self.is_p1 or not event.is_correct:
+            return
+
+        for letter in self.inner_objects:
+            letter.kill()
+
 
     def _get_ghost_pos(self, player_pos: tuple) -> int:
         """

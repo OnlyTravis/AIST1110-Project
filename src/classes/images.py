@@ -4,6 +4,7 @@ from pygame import image, Surface, Rect, transform, SRCALPHA
 class Images(Enum):
     TrashCan = "assets/trash_can.png"
     Letter = "assets/letter.png"
+    SubmitButton = "assets/submit_button.png"
 
 class ImageLoader:
     _images: dict[Images, Surface] = {}

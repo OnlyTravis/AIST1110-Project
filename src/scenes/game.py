@@ -12,8 +12,10 @@ from src.sprites.human_player import HumanPlayer
 from src.sprites.conveyor import ConveyorBelt
 from src.sprites.trash_can import TrashCan
 from src.sprites.submit_area import SubmitArea
+from src.sprites.submit_button import SubmitButton
 from src.ui_element.question_box import QuestionBox
 from src.ui_element.timer import Timer
+from src.ui_element.result_display import ResultDisplay
 from src.constants import INTERACT_DISTANCE
 
 class GameScreen(Scene):
@@ -27,6 +29,7 @@ class GameScreen(Scene):
         self._init_game_state()
         self.add_event_listener(KEYDOWN, self._handle_key_down)
         self.add_event_listener(GameEvent.GameStart, self._on_game_start)
+        self.add_event_listener(GameEvent.SubmitStatus, self._on_submit)
 
     def _init_ui(self):
         w, h = self.screen.get_size()
@@ -47,6 +50,8 @@ class GameScreen(Scene):
         self.objs.add(TrashCan(w/2+175, 430))
         self.objs.add(SubmitArea(w/2-200, 250, 200, True))
         self.objs.add(SubmitArea(w/2+200, 250, 200, False))
+        self.objs.add(SubmitButton(w/2-50, 250))
+        self.objs.add(SubmitButton(w/2+50, 250, False))
 
         self.player1 = HumanPlayer(w/2-100, h/2, True)
         self.player2 = HumanPlayer(w/2+100, h/2, False)
@@ -90,6 +95,12 @@ class GameScreen(Scene):
         Change GameState, Display first question
         """
         self.state.game_state = States.Playing
+
+    def _on_submit(self, event: Event):
+        # Add Correct/Incorrect Display
+        w, h = self.screen.get_size()
+        x = w/3 if event.is_p1 else 2*w/3
+        self.uis.add(ResultDisplay(x, 430, event.is_correct))
 
     def _check_player_near(self, objs):
         """

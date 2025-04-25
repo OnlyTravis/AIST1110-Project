@@ -10,7 +10,7 @@ from src.sprites.letter import Letter
 class Player(GameObject):
     def __init__(self, x: float, y: float, is_p1: bool):
         super().__init__(x, y, 0)
-        self.speed: float = 300
+        self.speed: float = 500
         self.is_p1: bool = is_p1
         self.is_holding: bool = False
         self.holding: Letter = None

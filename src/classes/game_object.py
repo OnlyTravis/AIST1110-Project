@@ -1,12 +1,10 @@
-from collections.abc import Callable
 from math import dist
 from pygame.sprite import Sprite, Group
-from pygame.event import Event, EventType
 
 from src.classes.state import GameState
-from src.classes.event import event_handler, GameEvent
+from src.classes.event import EventListener
 
-class GameObject(Sprite):
+class GameObject(Sprite, EventListener):
     def __init__(self, 
                  x, 
                  y, 
@@ -16,8 +14,8 @@ class GameObject(Sprite):
         interactable: (0: not interactable), (1: p1), (2: p2), (3: p1 & p2)
         recursive: Object contains other objects
         """
-        super().__init__()
-        self.listeners: list[int] = []
+        Sprite.__init__(self)
+        EventListener.__init__(self)
         self.x = x
         self.y = y
         self.interactable = interactable
@@ -56,22 +54,16 @@ class GameObject(Sprite):
         Returns the distance between self and a coordinate
         """
         return dist((self.x, self.y), pos)
-
-    def add_event_listener(self, event_type: EventType | GameEvent, func: Callable[[Event], None]):
-        listener_id = event_handler.add_listener(event_type, func)
-        self.listeners.append(listener_id)
-    
-    def remove_event_listener(self, listener_id: int):
-        self.listeners.remove(listener_id)
-        event_handler.remove_listener(listener_id)
     
     def kill(self):
-        for listener_id in self.listeners:
-            event_handler.remove_listener(listener_id)
+        self.remove_all_listeners()
         if self.recursive:
             for obj in self.inner_objects.sprites():
                 obj.kill()
         super().kill()
+
+    def get_pos(self, offset: tuple[float, float]) -> tuple[float, float]:
+        return (self.x + offset[0], self.y + offset[1])
     
     @property
     def pos(self):

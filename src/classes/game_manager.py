@@ -1,10 +1,11 @@
-from src.classes.event import GameEvent
+from src.classes.event import GameEvent, EventListener
 from src.classes.state import GameState, States
 from src.classes.gpt_api import GPTAPI
 from src.constants import QUESTION_TIMER, QUESTION_PER_GAME
 
-class GameManager:
+class GameManager(EventListener):
     def __init__(self):
+        super().__init__()
         self.timer = QUESTION_TIMER
 
         self.waiting_question = False
@@ -13,8 +14,9 @@ class GameManager:
         self.question_buffer = None
 
         self._fetch_question()
-        GameEvent.set_timeout(GameEvent.GameStart, 4000)
-        
+        GameEvent.GameStart.set_timeout(4000)
+
+        self.add_event_listener(GameEvent.SubmitWord, self._on_submit)
 
     def update(self, state: GameState, dt: float):
         # 1. Handle Question Timers
@@ -60,3 +62,26 @@ class GameManager:
             self.question_buffer = question
 
         self.waiting_question = False
+    
+    def _on_submit(self, event):
+        # 1. Check Word & Annouce Result
+        index = -1
+        for i, answer in enumerate(self.question.answers):
+            if answer.text.lower() == event.word.lower():
+                index = i
+                break
+
+        GameEvent.SubmitStatus.post({
+            "is_p1": event.is_p1,
+            "is_correct": index != -1,
+            "answer_index": index
+        })
+        
+        # 2. Update Score
+        if index != -1:
+            pass
+        
+        
+    
+    def __del__(self):
+        self.remove_all_listeners()

@@ -1,6 +1,6 @@
 class Answer:
-    def __init__(self, answer: str, score: int):
-        self.answer = answer
+    def __init__(self, text: str, score: int):
+        self.text = text
         self.score = score
 
 class Question:

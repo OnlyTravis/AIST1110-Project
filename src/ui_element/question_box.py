@@ -25,6 +25,7 @@ class QuestionBox(UIElement):
         self._set_up_ui()
         self.add_event_listener(GameEvent.GameStart, self._on_start_game)
         self.add_event_listener(GameEvent.UpdateQuestion, self._on_update_question)
+        self.add_event_listener(GameEvent.SubmitStatus, self._on_submit)
 
     def draw(self, screen: Surface, state: GameState):
         draw.rect(screen, "yellow", (self.x-self.w/2, self.y-self.h/2, self.w, self.h))
@@ -49,8 +50,9 @@ class QuestionBox(UIElement):
         if self.revealed[index]:
             return
         
-        answer_text: Text = self.inner_elements.sprites()[index+1]
-        answer_text.set_text(f"{index+1}. {self.question.answers[index]}")
+        self.revealed[index] = True
+        answer_text: Text = self.answers.sprites()[index]
+        answer_text.set_text(f"{index+1}. {self.question.answers[index].text}")
 
     def _set_up_ui(self):
         self.add_inner_element(Text(self.x, self.y-self.h/2+self.question_height/2, "3", "white", 40))
@@ -90,6 +92,12 @@ class QuestionBox(UIElement):
         self.question = event.question
         if self.question_visible:
             self._set_question_text(event.question.text)
+
+    def _on_submit(self, event):
+        if not event.is_correct:
+            return
+    
+        self.reveal_answer(event.answer_index)
     
     def kill(self):
         for answer in self.answers.sprites():

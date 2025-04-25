@@ -48,6 +48,9 @@ class UIElement(Sprite):
                 obj.kill()
         super().kill()
 
+    def get_pos(self, offset: tuple[float, float]) -> tuple[float, float]:
+        return (self.x + offset[0], self.y + offset[1])
+
     @property
     def pos(self):
         return (self.x, self.y)

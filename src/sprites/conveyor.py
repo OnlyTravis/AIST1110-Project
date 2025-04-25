@@ -16,8 +16,8 @@ class ConveyorBelt(GameObject):
                  is_forward=True):
         super().__init__(x, y, 0, True)
         self.length: int = length
-        self.rate: float = 1.5
-        self.speed: int = 3
+        self.rate: float = 0.7
+        self.speed: int = 6
         self.is_horizontal = is_horizontal
         self.is_forward = is_forward
         self._animation_tick = 0
