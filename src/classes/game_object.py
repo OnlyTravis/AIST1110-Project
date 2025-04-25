@@ -5,6 +5,9 @@ from src.classes.state import GameState
 from src.classes.event import EventListener
 
 class GameObject(Sprite, EventListener):
+    """
+    Object that requires game state to function
+    """
     def __init__(self, 
                  x, 
                  y, 

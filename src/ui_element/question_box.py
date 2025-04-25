@@ -27,17 +27,17 @@ class QuestionBox(UIElement):
         self.add_event_listener(GameEvent.UpdateQuestion, self._on_update_question)
         self.add_event_listener(GameEvent.SubmitStatus, self._on_submit)
 
-    def draw(self, screen: Surface, state: GameState):
+    def draw(self, screen: Surface):
         draw.rect(screen, "yellow", (self.x-self.w/2, self.y-self.h/2, self.w, self.h))
         draw.rect(screen, "black", (self.x-self.w/2, self.y-self.h/2, self.w, self.question_height))
         for rect in self.rects:
             draw.rect(screen, "black", rect)
 
         for answer in self.answers.sprites():
-            answer.draw(screen, state)
-        super().draw(screen, state)
+            answer.draw(screen)
+        super().draw(screen)
     
-    def update(self, state: GameState, dt: float):
+    def update(self, dt: float):
         if self.count_down >= dt:
             self.count_down -= dt
             if int(self.count_down) < int(self.count_down + dt):

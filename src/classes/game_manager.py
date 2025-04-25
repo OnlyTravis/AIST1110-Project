@@ -4,14 +4,16 @@ from src.classes.gpt_api import GPTAPI
 from src.constants import QUESTION_TIMER, QUESTION_PER_GAME
 
 class GameManager(EventListener):
-    def __init__(self):
+    def __init__(self, state: GameState):
         super().__init__()
+        self.state = state
         self.timer = QUESTION_TIMER
 
         self.waiting_question = False
         self.question = None
         self.question_num = 0
         self.question_buffer = None
+        self.answered = [False] * 6
 
         self._fetch_question()
         GameEvent.GameStart.set_timeout(4000)
@@ -49,6 +51,8 @@ class GameManager(EventListener):
         self.timer = QUESTION_TIMER
         state.timer = self.timer
         self.question = self.question_buffer
+        self.question_buffer = None
+        GameEvent.UpdateQuestion.post({"question": self.question})
 
     def _fetch_question(self):
         self.waiting_question = True
@@ -57,31 +61,38 @@ class GameManager(EventListener):
         question = GPTAPI.get_question()
         if self.question == None:
             self.question = question
-            GameEvent.post(GameEvent.UpdateQuestion, {"question": question})
+            GameEvent.UpdateQuestion.post({"question": question})
         else:
             self.question_buffer = question
 
         self.waiting_question = False
     
     def _on_submit(self, event):
-        # 1. Check Word & Annouce Result
+        # 1. Check Word
         index = -1
         for i, answer in enumerate(self.question.answers):
             if answer.text.lower() == event.word.lower():
                 index = i
                 break
 
+        # 2. Update Score
+        is_correct = (index != -1) and not self.answered[index]
+        if is_correct:
+            self.answered[index] = True
+            score = self.question.answers[index].score
+            if event.is_p1:
+                self.state.player1_score += score
+            else:
+                self.state.player2_score += score
+
+        # 3. Boardcast Event
         GameEvent.SubmitStatus.post({
             "is_p1": event.is_p1,
-            "is_correct": index != -1,
-            "answer_index": index
+            "is_correct": is_correct,
+            "answer_index": index,
+            "p1_score": self.state.player1_score,
+            "p2_score": self.state.player2_score
         })
-        
-        # 2. Update Score
-        if index != -1:
-            pass
-        
-        
     
     def __del__(self):
         self.remove_all_listeners()

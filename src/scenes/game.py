@@ -13,9 +13,10 @@ from src.sprites.conveyor import ConveyorBelt
 from src.sprites.trash_can import TrashCan
 from src.sprites.submit_area import SubmitArea
 from src.sprites.submit_button import SubmitButton
+from src.sprites.timer import Timer
 from src.ui_element.question_box import QuestionBox
-from src.ui_element.timer import Timer
 from src.ui_element.result_display import ResultDisplay
+from src.ui_element.text_button import TextButton
 from src.constants import INTERACT_DISTANCE
 
 class GameScreen(Scene):
@@ -35,7 +36,7 @@ class GameScreen(Scene):
         w, h = self.screen.get_size()
         self.uis = Group()
         self.uis.add(QuestionBox(w/2, 110))
-        self.uis.add(Timer(w-100, 110))
+        self.uis.add(TextButton(w-50, 50, 70, 70, "l l", lambda x:x, border_radius=35))
 
     def _init_objects(self):
         w, h = self.screen.get_size()
@@ -52,6 +53,7 @@ class GameScreen(Scene):
         self.objs.add(SubmitArea(w/2+200, 250, 200, False))
         self.objs.add(SubmitButton(w/2-50, 250))
         self.objs.add(SubmitButton(w/2+50, 250, False))
+        self.objs.add(Timer(w-100, 110))
 
         self.player1 = HumanPlayer(w/2-100, h/2, True)
         self.player2 = HumanPlayer(w/2+100, h/2, False)
@@ -69,7 +71,7 @@ class GameScreen(Scene):
         self.player2.draw(self.screen, self.state)
 
         for ui in self.uis.sprites():
-            ui.draw(self.screen, self.state)
+            ui.draw(self.screen)
 
     def update(self, dt):
         self._check_player_near(self.objs.sprites())
@@ -79,9 +81,7 @@ class GameScreen(Scene):
         self.player1.update(self.state, dt)
         self.player2.update(self.state, dt)
 
-        for ui in self.uis.sprites():
-            ui.update(self.state, dt)
-        
+        self.uis.update(dt=dt)
         self.manager.update(self.state, dt)
     
     def _handle_key_down(self, event: Event):

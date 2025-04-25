@@ -9,11 +9,11 @@ class TextAlign(Enum):
 
 class Text(UIElement):
     def __init__(self, 
-                 x, 
-                 y, 
-                 text="",
+                 x: float,
+                 y: float,
+                 text: str="",
                  color="black",
-                 font_size=30,
+                 font_size: int=30,
                  align=TextAlign.Center):
         super().__init__(x, y)
         self.text = text
@@ -22,7 +22,7 @@ class Text(UIElement):
         self.align = align
         self._render_text()
     
-    def draw(self, screen, state):
+    def draw(self, screen):
         screen.blit(self.rendered_text, self.text_rect)
         match self.align:
             case TextAlign.Start:

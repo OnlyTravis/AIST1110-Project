@@ -36,9 +36,20 @@ class ImageLoader:
         return frames
 
     @classmethod
-    def get(cls, name: Images) -> Surface:
+    def get(cls, name: Images, w: int=-1, h: int=-1, scale: float=-1) -> Surface:
         """
-        Fetchs Image corresponding to Images enum
+        Fetchs Image corresponding to Images enum.
+        Transforms the image to size (w, h) if both w and h are provided
+        Scales the image by the factor "scale" if scale is provided
+        (w and h are considered first)
         """
         assert not name in cls._images.keys()
-        return cls._images[name]
+        img = cls._images[name]
+
+        if w != -1 and h != -1:
+            return transform.scale(img, (w, h))
+        
+        if scale != -1:
+            return transform.scale_by(img, scale)
+
+        return img

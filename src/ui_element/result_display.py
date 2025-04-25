@@ -30,14 +30,14 @@ class ResultDisplay(UIElement):
             self.rendered_text = text_font.render("Incorrect", True, "red")
         self.text_rect = self.rendered_text.get_rect(center=self.get_pos((0, self.size)))
     
-    def draw(self, screen, state):
+    def draw(self, screen):
         alpha = int((self.timer/self.fade_time)*255)
         self.symbol.set_alpha(alpha)
         self.rendered_text.set_alpha(alpha)
         screen.blit(self.symbol, (self.x-self.size/2, self.y-self.size/2))
         screen.blit(self.rendered_text, self.text_rect)
 
-    def update(self, state, dt):
+    def update(self, dt):
         self.timer -= dt
         if self.timer < 0:
             self.kill()

@@ -20,6 +20,8 @@ class GameState():
         self.player2_near = None
         self.player1_is_holding = False
         self.player2_is_holding = False
+        self.player1_score = 0
+        self.player2_score = 0
 
         self.question_number = 0
         self.timer = QUESTION_TIMER
