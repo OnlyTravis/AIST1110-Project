@@ -1,4 +1,4 @@
-from pygame import key, event, KEYDOWN, K_e, K_RETURN, K_w, K_a, K_s, K_d, K_UP, K_DOWN, K_LEFT, K_RIGHT
+from pygame import key, KEYDOWN, K_e, K_RETURN, K_w, K_a, K_s, K_d, K_UP, K_DOWN, K_LEFT, K_RIGHT
 from pygame.event import Event
 
 from src.classes.state import GameState

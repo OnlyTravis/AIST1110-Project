@@ -1,43 +1,45 @@
 from collections.abc import Callable
-from pygame import KEYDOWN, K_SPACE, event, surface, font
+from random import randint
+from pygame import KEYDOWN, event, surface
 
 from src.classes.scene import Scene
 from src.classes.event import event_handler
-from src.scenes.tutorial import TutorialScreen
+from src.classes.images import Images
+from src.classes.scene import Scenes
+from src.ui_element.image import Image
+from src.ui_element.letter import LetterDisplay
+from src.ui_element.text import Text
 
 class TitleScreen(Scene):
-    def __init__(self, screen: surface.Surface, toScene: Callable):
-        super().__init__(screen, toScene)
+    def __init__(self, screen: surface.Surface, to_scene: Callable):
+        super().__init__(screen, to_scene)
 
-        listener_id = event_handler.add_listener(KEYDOWN, self.onKeyDown)
+        listener_id = event_handler.add_listener(KEYDOWN, self.on_key_down)
         self.listeners.append(listener_id)
 
         # Init texts
-        font_1 = font.Font(font.get_default_font(), 40)
-        self.title = font_1.render("Title Screen (WIP)", True, "black")
-        self.tip =  font_1.render("Press Space to Start", True, "black")
-        self.tip_position = 0
-        self.tip_velocity = 0
-        self.tip_direction = 1
+        self._set_up_ui()
+
+    def _set_up_ui(self):
+        w, h = self.screen.get_size()
+        # 1. Add Background
+        self.add_element(Image(w/2, h/2, w, h, Images.Background_1))
+
+        # 2. Title Text
+        title_text = "Guess The Answer"
+        x = w/2 - 60*len(title_text)/2
+        y = 150
+        for chr in title_text:
+            if chr != " ":
+                self.add_element(LetterDisplay(chr, x, y+randint(-5, 5), 55))
+            x += 60
+        self.add_element(Text(w/2, h/2+100, "Press Any Key To Start", color=(100, 100, 100), font_size=50))
 
     def draw(self):
-        w, h = self.screen.get_size()
-
-        # Draw texts
-        self.screen.fill("gray")
-        title_rect = self.title.get_rect(center=(w/2, h/2))
-        self.screen.blit(self.title, title_rect)
-        tip_rect = self.tip.get_rect(center=(w/2, h/2+130+self.tip_position))
-        self.screen.blit(self.tip, tip_rect)
+        super().draw()
     
     def update(self, dt):
-        self.tip_velocity += self.tip_direction*0.05
-        self.tip_position += self.tip_velocity
-        if self.tip_position > 10:
-            self.tip_direction = -1
-        elif self.tip_position < 0:
-            self.tip_direction = 1 
+        super().update(dt)
 
-    def onKeyDown(self, event: event.Event):
-        if event.key == K_SPACE:
-            self.exitTo(TutorialScreen)
+    def on_key_down(self, event: event.Event):
+        self.exit_to(Scenes.OptionScreen)

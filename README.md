@@ -1,14 +1,11 @@
 # Group Project for AIST1110
 
 # To-do list : 
-- Score display
 - Bonus points based on word length (to balance out the game)
-- option screen before game start
 - Pause Screen
 - End Screen
 - annouce function in game scene
 - next question when all answered
-- score display
 
 - TitleScreen Design
 - TutorialScreen Design (Maybe after the game is finished)

@@ -38,6 +38,10 @@ class Text(UIElement):
     def set_text(self, text):
         self.text = text
         self._render_text()
+    
+    def set_color(self, color):
+        self.color = color
+        self._render_text()
 
     def _render_text(self):
         text_font = font.Font(font.get_default_font(), self.font_size)

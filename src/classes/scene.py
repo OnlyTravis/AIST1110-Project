@@ -1,14 +1,21 @@
 from collections.abc import Callable
+from enum import Enum
 from pygame.sprite import Group
 from pygame.surface import Surface
 
 from src.classes.event import EventListener
 from src.classes.ui_element import UIElement
 
+class Scenes(Enum):
+    TitleScreen = 0
+    OptionScreen = 1
+    TutorialScreen = 2
+    GameScreen = 3
+
 class Scene(EventListener):
-    def __init__(self, screen: Surface, toScene: Callable):
+    def __init__(self, screen: Surface, to_scene: Callable):
         self.screen: Surface = screen
-        self.toScene: Callable = toScene
+        self.to_scene: Callable = to_scene
         self.listeners: list[int] = []
         self._ui_elements = Group()
     
@@ -27,6 +34,6 @@ class Scene(EventListener):
         for ele in self._ui_elements.sprites():
             ele.kill()
 
-    def exitTo(self, scene_class):
+    def exit_to(self, scene: Scenes, **args):
         self.exit()
-        self.toScene(scene_class)
+        self.to_scene(scene, **args)

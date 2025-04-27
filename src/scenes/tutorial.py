@@ -3,13 +3,14 @@ from pygame import KEYDOWN, K_SPACE, event, surface, font
 
 from src.classes.scene import Scene
 from src.classes.event import event_handler
-from src.scenes.game import GameScreen
+from src.classes.scene import Scenes
 
 class TutorialScreen(Scene):
-    def __init__(self, screen: surface.Surface, toScene: Callable):
-        super().__init__(screen, toScene)
+    def __init__(self, screen: surface.Surface, to_scene: Callable, **args):
+        super().__init__(screen, to_scene)
+        self.other_args = args  # Passes to GameScreen
 
-        listener_id = event_handler.add_listener(KEYDOWN, self.onKeyDown)
+        listener_id = event_handler.add_listener(KEYDOWN, self.on_key_down)
         self.listeners.append(listener_id)
 
         # Init texts
@@ -27,6 +28,6 @@ class TutorialScreen(Scene):
         tip_rect = self.tip.get_rect(center=(w/2, h/2+130))
         self.screen.blit(self.tip, tip_rect)
 
-    def onKeyDown(self, event: event.Event):
+    def on_key_down(self, event: event.Event):
         if event.key == K_SPACE:
-            self.exitTo(GameScreen)
+            self.exit_to(Scenes.GameScreen, **self.other_args)

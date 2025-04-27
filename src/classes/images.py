@@ -6,6 +6,7 @@ class Images(Enum):
     Letter = "assets/letter.png"
     SubmitButton = "assets/submit_button.png"
     PauseButton = "assets/pause_button.png"
+    Background_1 = "assets/background_1.png"
 
 class ImageLoader:
     _images: dict[Images, Surface] = {}

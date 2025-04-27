@@ -22,14 +22,14 @@ from src.ui_element.image_button import ImageButton
 from src.constants import INTERACT_DISTANCE
 
 class GameScreen(Scene):
-    def __init__(self, screen: Surface, toScene: Callable):
-        super().__init__(screen, toScene)
+    def __init__(self, screen: Surface, to_scene: Callable, gamemode: Gamemode):
+        super().__init__(screen, to_scene)
 
         self.state = GameState()
         self.manager = GameManager(self.state)
         self._init_ui()
         self._init_objects()
-        self._init_game_state()
+        self._init_game_state(gamemode)
         self.add_event_listener(KEYDOWN, self._handle_key_down)
         self.add_event_listener(GameEvent.GameStart, self._on_game_start)
         self.add_event_listener(GameEvent.SubmitStatus, self._on_submit)
@@ -61,9 +61,9 @@ class GameScreen(Scene):
         self.player1 = HumanPlayer(w/2-100, h/2, True)
         self.player2 = HumanPlayer(w/2+100, h/2, False)
 
-    def _init_game_state(self):
+    def _init_game_state(self, gamemode):
         self.state.player1_pos = (self.player1.x, self.player1.y)
-        self.state.gamemode = Gamemode.LocalMultiplayer # Add change gamemode later
+        self.state.gamemode = gamemode
 
     def draw(self):
         self.screen.fill(color=(200,200,200))

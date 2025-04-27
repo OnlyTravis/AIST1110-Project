@@ -90,6 +90,7 @@ class GPTAPI():
 
             # 2. Processing Texts & Appending questions to buffer
             full_text = response.choices[0].message.content
+            print(full_text)
             lines: list[str] = []
             i = 0
             for line in full_text.splitlines():
