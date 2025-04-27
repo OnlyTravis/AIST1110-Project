@@ -26,25 +26,29 @@ class Button(UIElement):
         self.rect = Rect(self.x-self.w/2, self.y-self.h/2, 
                          self.w, self.h)
         self.background_color = background_color
-        self.hover_color = Color(
-            int(255-(255-background_color.r)*0.8),
-            int(255-(255-background_color.g)*0.8),
-            int(255-(255-background_color.b)*0.8)
-        )
+        if self.background_color != None:
+            self.hover_color = Color(
+                int(255-(255-background_color.r)*0.8),
+                int(255-(255-background_color.g)*0.8),
+                int(255-(255-background_color.b)*0.8)
+            )
         self.border_radius = border_radius
         self.is_hover = False
         self.on_click = on_click
         self.add_event_listener(MOUSEBUTTONDOWN, self._on_click)
     
     def draw(self, screen: Surface):
-        if self.is_hover:
-            draw.rect(screen, self.hover_color, self.rect, 0, self.border_radius)
-        else:
-            draw.rect(screen, self.background_color, self.rect, 0, self.border_radius)
+        if self.background_color != None:
+            if self.is_hover:
+                draw.rect(screen, self.hover_color, self.rect, 0, self.border_radius)
+            else:
+                draw.rect(screen, self.background_color, self.rect, 0, self.border_radius)
+        super().draw(screen)
 
     def update(self, dt: float):
         mouse_pos = mouse.get_pos()
         self.is_hover = self.rect.collidepoint(mouse_pos)
+        super().update(dt)
 
     def _on_click(self, event):
         """

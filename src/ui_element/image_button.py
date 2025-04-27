@@ -1,4 +1,5 @@
 from typing import Callable
+from pygame import BLEND_RGB_ADD
 from pygame.color import Color
 from pygame.surface import Surface
 
@@ -14,10 +15,9 @@ class ImageButton(Button):
                  h: float, 
                  img: Images,
                  on_click: Callable,
-                 background_color: Color=Color(150, 150, 150),
+                 background_color: Color=None,
                  border_radius: int=0):
-        Button.__init__(
-            self, 
+        super().__init__(
             x, 
             y, 
             w, 
@@ -27,11 +27,20 @@ class ImageButton(Button):
             border_radius
         )
         self.img = Image(x, y, w, h, img)
+        self.img_hover = Image(x, y, w, h, img)
+        self.img_hover.img.fill((10, 10, 10), special_flags=BLEND_RGB_ADD)
     
     def draw(self, screen: Surface):
         super().draw(screen)
-        self.img.draw(screen)
+        if self.is_hover:
+            self.img_hover.draw(screen)
+        else:
+            self.img.draw(screen)
     
     def update(self, dt: float):
         super().update(dt)
         self.img.update(dt)
+    
+    def kill(self):
+        super().kill()
+        self.img.kill()

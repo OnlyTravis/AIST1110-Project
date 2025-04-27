@@ -11,6 +11,7 @@ class States(Enum):
     BeforeStart = 0
     Playing = 1
     Ended = 2
+    Paused = 3
 
 class GameState():
     def __init__(self):

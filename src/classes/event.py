@@ -4,6 +4,7 @@ from collections.abc import Callable
 from pygame import USEREVENT, event, time
 from pygame.event import Event, EventType
 
+
 class GameEvent(Enum):
     GameStart = USEREVENT
     UpdateQuestion = USEREVENT+1
@@ -11,6 +12,8 @@ class GameEvent(Enum):
     SubmitButtonPressed = USEREVENT+3  # On Submit Button Press
     SubmitWord = USEREVENT+4  # Contains word from SubmitArea
     SubmitStatus = USEREVENT+5  # After Checking submition
+    GamePause = USEREVENT+6
+    GameResume = USEREVENT+7
 
     def post(self, dict: dict={}):
         event.post(Event(self.value, **dict))

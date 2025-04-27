@@ -85,7 +85,9 @@ class QuestionBox(UIElement):
         self.question_visible = True
         self.count_down = -1
 
-        if self.question != None:
+        if self.question == None:
+            self._set_question_text("Waiting For Question...")
+        else:
             self._set_question_text(self.question.text)
 
     def _on_update_question(self, event):

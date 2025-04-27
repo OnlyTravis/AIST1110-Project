@@ -18,3 +18,6 @@ class Image(UIElement):
     
     def draw(self, screen: Surface):
         screen.blit(self.img, (self.x-self.w/2, self.y-self.h/2))
+    
+    def update_surface(self, surface: Surface):
+        self.img = surface

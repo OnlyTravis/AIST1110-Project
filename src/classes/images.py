@@ -5,6 +5,7 @@ class Images(Enum):
     TrashCan = "assets/trash_can.png"
     Letter = "assets/letter.png"
     SubmitButton = "assets/submit_button.png"
+    PauseButton = "assets/pause_button.png"
 
 class ImageLoader:
     _images: dict[Images, Surface] = {}
@@ -43,7 +44,7 @@ class ImageLoader:
         Scales the image by the factor "scale" if scale is provided
         (w and h are considered first)
         """
-        assert not name in cls._images.keys()
+        assert name in cls._images.keys()
         img = cls._images[name]
 
         if w != -1 and h != -1:

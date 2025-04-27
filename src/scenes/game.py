@@ -1,6 +1,6 @@
 from collections.abc import Callable
-
-from pygame import surface, KEYDOWN
+from pygame import KEYDOWN
+from pygame.surface import Surface
 from pygame.sprite import Group
 from pygame.event import Event
 
@@ -8,6 +8,7 @@ from src.classes.game_manager import GameManager, GameEvent
 from src.classes.game_object import GameObject
 from src.classes.state import States, GameState, Gamemode
 from src.classes.scene import Scene
+from src.classes.images import Images
 from src.sprites.human_player import HumanPlayer
 from src.sprites.conveyor import ConveyorBelt
 from src.sprites.trash_can import TrashCan
@@ -16,11 +17,12 @@ from src.sprites.submit_button import SubmitButton
 from src.sprites.timer import Timer
 from src.ui_element.question_box import QuestionBox
 from src.ui_element.result_display import ResultDisplay
-from src.ui_element.text_button import TextButton
+from src.ui_element.score_display import ScoreDisplay
+from src.ui_element.image_button import ImageButton
 from src.constants import INTERACT_DISTANCE
 
 class GameScreen(Scene):
-    def __init__(self, screen: surface.Surface, toScene: Callable):
+    def __init__(self, screen: Surface, toScene: Callable):
         super().__init__(screen, toScene)
 
         self.state = GameState()
@@ -34,9 +36,10 @@ class GameScreen(Scene):
 
     def _init_ui(self):
         w, h = self.screen.get_size()
-        self.uis = Group()
-        self.uis.add(QuestionBox(w/2, 110))
-        self.uis.add(TextButton(w-50, 50, 70, 70, "l l", lambda x:x, border_radius=35))
+        self.add_element(QuestionBox(w/2, 110))
+        self.add_element(ImageButton(w-50, 50, 70, 70, Images.PauseButton, self._on_pause))
+        self.add_element(ScoreDisplay(100, 50, True))
+        self.add_element(ScoreDisplay(w-100, 50, False))
 
     def _init_objects(self):
         w, h = self.screen.get_size()
@@ -70,19 +73,20 @@ class GameScreen(Scene):
         self.player1.draw(self.screen, self.state)
         self.player2.draw(self.screen, self.state)
 
-        for ui in self.uis.sprites():
-            ui.draw(self.screen)
+        super().draw()
 
     def update(self, dt):
-        self._check_player_near(self.objs.sprites())
+        if self.state.game_state == States.Playing:
+            self._check_player_near(self.objs.sprites())
 
-        for obj in self.objs.sprites():
-            obj.update(self.state, dt)
-        self.player1.update(self.state, dt)
-        self.player2.update(self.state, dt)
+            for obj in self.objs.sprites():
+                obj.update(self.state, dt)
+            self.player1.update(self.state, dt)
+            self.player2.update(self.state, dt)
 
-        self.uis.update(dt=dt)
-        self.manager.update(self.state, dt)
+            self.manager.update(self.state, dt)
+
+        super().update(dt)
     
     def _handle_key_down(self, event: Event):
         """
@@ -100,7 +104,10 @@ class GameScreen(Scene):
         # Add Correct/Incorrect Display
         w, h = self.screen.get_size()
         x = w/3 if event.is_p1 else 2*w/3
-        self.uis.add(ResultDisplay(x, 430, event.is_correct))
+        self.add_element(ResultDisplay(x, 430, event.is_correct))
+    
+    def _on_pause(self):
+        GameEvent.GamePause.post()
 
     def _check_player_near(self, objs):
         """

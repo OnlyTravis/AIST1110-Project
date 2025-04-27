@@ -1,6 +1,7 @@
 # Group Project for AIST1110
 
 # To-do list : 
+- Score display
 - Bonus points based on word length (to balance out the game)
 - option screen before game start
 - Pause Screen

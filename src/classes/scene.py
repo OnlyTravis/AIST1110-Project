@@ -1,28 +1,31 @@
 from collections.abc import Callable
+from pygame.sprite import Group
 from pygame.surface import Surface
-from pygame.event import Event, EventType
 
-from src.classes.event import event_handler
+from src.classes.event import EventListener
+from src.classes.ui_element import UIElement
 
-class Scene():
+class Scene(EventListener):
     def __init__(self, screen: Surface, toScene: Callable):
-        self.screen = screen
+        self.screen: Surface = screen
         self.toScene: Callable = toScene
         self.listeners: list[int] = []
+        self._ui_elements = Group()
+    
+    def add_element(self, ele: UIElement):
+        self._ui_elements.add(ele)
     
     def update(self, dt):
-        pass
+        self._ui_elements.update(dt=dt)
 
     def draw(self):
-        pass
-
-    def add_event_listener(self, event_type: EventType, func: Callable[[Event], None]):
-        listener_id = event_handler.add_listener(event_type, func)
-        self.listeners.append(listener_id)
+        for ele in self._ui_elements.sprites():
+            ele.draw(self.screen)
 
     def exit(self):
-        for listener_id in self.listeners:
-            event_handler.remove_listener(listener_id)
+        self.remove_all_listeners()
+        for ele in self._ui_elements.sprites():
+            ele.kill()
 
     def exitTo(self, scene_class):
         self.exit()

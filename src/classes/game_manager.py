@@ -1,8 +1,7 @@
-from threading import Thread
-
 from src.classes.event import GameEvent, EventListener
 from src.classes.state import GameState, States
 from src.classes.gpt_api import GPTAPI
+from src.classes.data_classes import Question
 from src.constants import QUESTION_TIMER, QUESTION_PER_GAME
 
 class GameManager(EventListener):
@@ -14,25 +13,21 @@ class GameManager(EventListener):
         self.waiting_question = False
         self.question = None
         self.question_num = 0
-        self.question_buffer = None
         self.answered = [False] * 6
 
-        self._fetch_question()
         GameEvent.GameStart.set_timeout(4000)
-
+        GPTAPI.get_question(self._on_recieve_question)
         self.add_event_listener(GameEvent.SubmitWord, self._on_submit)
+    
+    def _on_recieve_question(self, question: Question):
+        self.question = question
+        GameEvent.UpdateQuestion.post({"question": question})
 
     def update(self, state: GameState, dt: float):
         # 1. Handle Question Timers
-        self._handler_timer(state, dt)
-
-        # 2. Fetch Question if needed
-        if (not self.waiting_question and 
-            self.question_buffer == None and
-            self.question_num + 1 != QUESTION_PER_GAME):
-            self._fetch_question()
+        self._handle_timer(state, dt)
         
-    def _handler_timer(self, state: GameState, dt: float):
+    def _handle_timer(self, state: GameState, dt: float):
         if state.game_state != States.Playing:
             return
         
@@ -52,23 +47,8 @@ class GameManager(EventListener):
         self.question_num += 1
         self.timer = QUESTION_TIMER
         state.timer = self.timer
-        self.question = self.question_buffer
-        self.question_buffer = None
-        GameEvent.UpdateQuestion.post({"question": self.question})
-
-    def _fetch_question(self):
-        self.waiting_question = True
-
-        def fetch_question():
-            question = GPTAPI.get_question()
-            if self.question == None:
-                self.question = question
-                GameEvent.UpdateQuestion.post({"question": question})
-            else:
-                self.question_buffer = question
-            self.waiting_question = False
-        Thread(target=fetch_question).start()
-    
+        GPTAPI.get_question(self._on_recieve_question)
+ 
     def _on_submit(self, event):
         # 1. Check Word
         index = -1
