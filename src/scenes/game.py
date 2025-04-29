@@ -15,6 +15,7 @@ from src.sprites.trash_can import TrashCan
 from src.sprites.submit_area import SubmitArea
 from src.sprites.submit_button import SubmitButton
 from src.sprites.timer import Timer
+from src.ui_element.image import Image
 from src.ui_element.question_box import QuestionBox
 from src.ui_element.result_display import ResultDisplay
 from src.ui_element.score_display import ScoreDisplay
@@ -40,6 +41,8 @@ class GameScreen(Scene):
         self.add_element(ImageButton(w-50, 50, 70, 70, Images.PauseButton, self._on_pause))
         self.add_element(ScoreDisplay(100, 50, True))
         self.add_element(ScoreDisplay(w-100, 50, False))
+        self.add_element(Image(100, h-60, 80, 80, Images.ConveyorJunction))
+        self.add_element(Image(w-100, h-60, 80, 80, Images.ConveyorJunction, 90))
 
     def _init_objects(self):
         w, h = self.screen.get_size()
@@ -49,15 +52,16 @@ class GameScreen(Scene):
         self.objs.add(ConveyorBelt(140, h-60, w/2-140, True))
         self.objs.add(ConveyorBelt(w/2, h-60, w/2-140, True, False))
         self.objs.add(TrashCan(w/2, 250))
-        self.objs.add(SubmitArea(w/2-200, 250, 200, True))
-        self.objs.add(SubmitArea(w/2+200, 250, 200, False))
-        self.objs.add(SubmitButton(w/2-50, 250))
-        self.objs.add(SubmitButton(w/2+50, 250, False))
-        self.objs.add(Timer(w-100, 110))
+        self.objs.add(SubmitArea(0.25*w+50, 250, w/2-200, True))
+        self.objs.add(SubmitArea(0.75*w-50, 250, w/2-200, False))
+        self.objs.add(SubmitButton(w/2-70, 270))
+        self.objs.add(SubmitButton(w/2+70, 270, False))
+        self.objs.add(Timer(w/2, h/2+95))
 
-        movable_area = (140, 220, w-140, h-100)
-        self.player1 = HumanPlayer(w/2-100, h/2, True, movable_area)
-        self.player2 = HumanPlayer(w/2+100, h/2, False, movable_area)
+        spawnpoint = ((0.25*w+50, h/2+95), (0.75*w-50, h/2+95))
+        movable_area = (140, 290, w-140, h-100)
+        self.player1 = HumanPlayer(spawnpoint[0][0], spawnpoint[0][1], True, movable_area)
+        self.player2 = HumanPlayer(spawnpoint[1][0], spawnpoint[1][1], False, movable_area)
 
     def _init_game_state(self, gamemode):
         self.state.player1_pos = (self.player1.x, self.player1.y)
@@ -106,8 +110,8 @@ class GameScreen(Scene):
     def _on_submit(self, event: Event):
         # Add Correct/Incorrect Display
         w, h = self.screen.get_size()
-        x = w/3 if event.is_p1 else 2*w/3
-        self.add_element(ResultDisplay(x, 430, event.is_correct))
+        x = 0.25*w+50 if event.is_p1 else 0.75*w-50
+        self.add_element(ResultDisplay(x, h/2+80, event.is_correct))
     
     def _on_pause(self):
         GameEvent.GamePause.post()

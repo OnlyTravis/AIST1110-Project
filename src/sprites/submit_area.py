@@ -1,17 +1,16 @@
 from math import dist
-from pygame import draw
+from pygame import draw, transform
 from pygame.surface import Surface
 
+from src.classes.images import ImageLoader, Images
 from src.classes.state import GameState
 from src.classes.game_object import GameObject
 from src.classes.event import GameEvent
 from src.sprites.player import Player
 from src.sprites.letter import Letter
 
-"""
-    Designated Player Near Area and is holding letter: 
-    - Update letter position
-"""
+LETTER_SIZE = 35
+LETTER_SEPARATION = 40
 
 class SubmitArea(GameObject):
     def __init__(self,
@@ -25,23 +24,32 @@ class SubmitArea(GameObject):
         self.ghost_pos = -1
         self.is_near_player = False  # To detect when player_near is changed and update displays
         self.letter_count = 0
+        frame_indice = [0, 1, 2] if is_p1 else [3, 4, 5]
+        self.frames = ImageLoader.get_frames(Images.SubmitTable, 32, 80, 80, frame_indice)
+        self.frames[1] = transform.scale(self.frames[1], (self.width-160, 80))
         self.add_event_listener(GameEvent.SubmitButtonPressed, self._on_submit)
         self.add_event_listener(GameEvent.SubmitStatus, self._after_submit)
     
     def draw(self, screen: Surface, state: GameState):
+        # 1. Draw Table
         half = self.width / 2
-        draw.rect(screen, "gray", (self.x-half, self.y - 30, self.width, 60))
+        screen.blit(self.frames[0], (self.x - half, self.y - 40))
+        screen.blit(self.frames[1], (self.x - half + 80, self.y - 40))
+        screen.blit(self.frames[2], (self.x + half - 80, self.y - 40))
 
+        # 2. Draw Letters on table
         for obj in self.inner_objects.sprites():
             obj.draw(screen, state)
         
+        # 3. Draw ghost if player is near and holding letter
         if self.ghost_pos != -1:
             n = len(self.inner_objects.sprites())
-            x = self.x - (n+1)*25 + self.ghost_pos*50
+            x = self.x - n*LETTER_SEPARATION/2 + self.ghost_pos*LETTER_SEPARATION
+            offset = LETTER_SIZE/2
             if self.is_p1:
-                draw.rect(screen, "red", (x, self.y-20, 40, 40))
+                draw.rect(screen, "red", (x-offset, self.y-offset-5, 2*offset, 2*offset), border_radius=10)
             else:
-                draw.rect(screen, "blue", (x, self.y-20, 40, 40))
+                draw.rect(screen, "blue", (x-offset, self.y-offset-5, 2*offset, 2*offset), border_radius=10)
 
     def update(self, state: GameState, dt: float):
         self._update_interactability(state)
@@ -79,6 +87,7 @@ class SubmitArea(GameObject):
         for obj in self.inner_objects.sprites():
             if obj.index >= self.ghost_pos:
                 obj.index += 1
+        letter.set_size(LETTER_SIZE)
         self.inner_objects.add(letter)
         self.letter_count += 1
         self.ghost_pos = -1
@@ -126,13 +135,13 @@ class SubmitArea(GameObject):
         based on the player position.
         """
         n = len(self.inner_objects.sprites())
-        boundary = self.x - (n-1)*25
+        boundary = self.x - (n-1)*LETTER_SEPARATION/2
 
         i = 0
         while i < n:
             if player_pos[0] < boundary:
                 return i
-            boundary += 50
+            boundary += LETTER_SEPARATION
             i += 1
         return i
 
@@ -174,14 +183,14 @@ class SubmitArea(GameObject):
         # 2. Update Letter Positions
         if self.is_near_player and self.interactable:
             # Reserve Gap for Ghost Letter
-            start_x = self.x - 25*len(letters)
+            start_x = self.x - LETTER_SEPARATION/2*len(letters)
             for letter in letters:
-                x = start_x + letter.index*50
+                x = start_x + letter.index*LETTER_SEPARATION
                 if letter.index >= self.ghost_pos:
-                    x += 50
-                letter.move_to(x, self.y)
+                    x += LETTER_SEPARATION
+                letter.move_to(x, self.y-5)
         else:
             # Ordinary Display
-            start_x = self.x - 25*(len(letters)-1)
+            start_x = self.x - LETTER_SEPARATION/2*(len(letters)-1)
             for letter in letters:
-                letter.move_to(start_x + 50*letter.index, self.y)
+                letter.move_to(start_x + LETTER_SEPARATION*letter.index, self.y-5)

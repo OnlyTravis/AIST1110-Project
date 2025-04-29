@@ -1,7 +1,8 @@
-from pygame import draw, Rect
+from pygame import draw, transform, Rect
 from pygame.surface import Surface
 
 from src.classes.game_object import GameObject
+from src.classes.images import ImageLoader, Images
 from src.classes.state import GameState
 from src.sprites.letter import Letter
 
@@ -20,21 +21,25 @@ class ConveyorBelt(GameObject):
         self.is_forward = is_forward
         self._animation_tick = 0
         self._time_since_new = 0
+        self.head = ImageLoader.get(Images.ConveyorHead, 80, 80)
+        if self.is_horizontal:
+            self.head = transform.rotate(self.head, 90)
+        self.tail = transform.flip(self.head, True, True)
     
     def draw(self, screen: Surface, state: GameState):
         # 1.1 Draw Border
         if self.is_horizontal:
-            draw.rect(screen, "black", Rect(self.x, self.y-40, self.length, 80))
-            draw.rect(screen, "gray", Rect(self.x, self.y-30, self.length, 60))
+            draw.rect(screen, "black", Rect(self.x+25, self.y-40, self.length-50, 80))
+            draw.rect(screen, "gray", Rect(self.x+25, self.y-30, self.length-50, 60))
         else:
-            draw.rect(screen, "black", Rect(self.x-40, self.y, 80, self.length))
-            draw.rect(screen, "gray", Rect(self.x-30, self.y, 60, self.length))
+            draw.rect(screen, "black", Rect(self.x-40, self.y+25, 80, self.length-50))
+            draw.rect(screen, "gray", Rect(self.x-30, self.y+25, 60, self.length-50))
         
         # 1.2 Draw Conveyor segments
         SEPARATION = 30
-        l = SEPARATION*self._animation_tick
+        l = 25+SEPARATION*self._animation_tick
         if not self.is_forward:
-            l = SEPARATION-l
+            l = 50+SEPARATION-l
         while abs(l)+SEPARATION < self.length:
             if self.is_horizontal:
                 x, y = self.x + l, self.y
@@ -60,11 +65,15 @@ class ConveyorBelt(GameObject):
         # 3. Draw covers
         COVER_COLOR = (20, 20, 20)
         if self.is_horizontal:
-            draw.rect(screen, COVER_COLOR, (self.x, self.y-40, 50, 80))
-            draw.rect(screen, COVER_COLOR, (self.x+self.length-50, self.y-40, 50, 80))
+            screen.blit(self.head, (self.x, self.y-40))
+            screen.blit(self.tail, (self.x+self.length-80, self.y-40))
+            #draw.rect(screen, COVER_COLOR, (self.x, self.y-40, 50, 80))
+            #draw.rect(screen, COVER_COLOR, (self.x+self.length-50, self.y-40, 50, 80))
         else:
-            draw.rect(screen, COVER_COLOR, (self.x-40, self.y, 80, 50))
-            draw.rect(screen, COVER_COLOR, (self.x-40, self.y+self.length-50, 80, 50))
+            screen.blit(self.head, (self.x-40, self.y))
+            screen.blit(self.tail, (self.x-40, self.y+self.length-80))
+            #draw.rect(screen, COVER_COLOR, (self.x-40, self.y, 80, 50))
+            #draw.rect(screen, COVER_COLOR, (self.x-40, self.y+self.length-50, 80, 50))
 
     def update(self, state: GameState, dt: float):
         # 1. Update conveyor animation

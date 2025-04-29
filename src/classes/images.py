@@ -6,7 +6,10 @@ class Images(Enum):
     Letter = "assets/letter.png"
     SubmitButton = "assets/submit_button.png"
     PauseButton = "assets/pause_button.png"
-    Background_1 = "assets/background_1.png"
+    Background1 = "assets/background_1.png"
+    ConveyorHead = "assets/conveyor_head.png"
+    ConveyorJunction = "assets/conveyor_junction.png"
+    SubmitTable = "assets/submit_table.png"
 
 class ImageLoader:
     _images: dict[Images, Surface] = {}
@@ -17,10 +20,15 @@ class ImageLoader:
             cls._images[img] = image.load(img.value).convert_alpha()
     
     @classmethod
-    def get_frames(cls, name: Images, segment_width: int, new_width: int, new_height: int) -> list[Surface]:
+    def get_frames(cls, name: Images,
+                   segment_width: int,
+                   new_width: int,
+                   new_height: int,
+                   indices: list[int] = []) -> list[Surface]:
         """
         Fetchs frames in spritesheet image,
         transform the fetched image to size: (width, height)
+        All frames will be extracted if indices = []
         """
         assert name in cls._images.keys()
         img = cls._images[name]
@@ -30,6 +38,9 @@ class ImageLoader:
 
         frames = []
         for i in range(int(img_w / segment_width)):
+            if len(indices) != 0 and not i in indices:
+                continue
+
             frame = Surface((segment_width, img_h), SRCALPHA)
             frame.blit(img, (0, 0), Rect(i*segment_width, 0, segment_width, img_h))
             frame = transform.scale(frame, (new_width, new_height)).convert_alpha()

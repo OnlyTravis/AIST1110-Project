@@ -1,4 +1,4 @@
-from pygame import draw
+from pygame import transform
 from pygame.surface import Surface
 
 from src.classes.ui_element import UIElement
@@ -10,11 +10,17 @@ class Image(UIElement):
                  y: float,
                  w: int,
                  h: int,
-                 img: Images):
+                 img: Images,
+                 rotation: float = 0):
+        """
+        rotation: anti-clockwise in degrees
+        """
         super().__init__(x, y)
         self.w = w
         self.h = h
         self.img = ImageLoader.get(img, w, h)
+        if rotation != 0:
+            self.img = transform.rotate(self.img, rotation)
     
     def draw(self, screen: Surface):
         screen.blit(self.img, (self.x-self.w/2, self.y-self.h/2))

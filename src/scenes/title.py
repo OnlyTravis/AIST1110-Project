@@ -23,7 +23,7 @@ class TitleScreen(Scene):
     def _set_up_ui(self):
         w, h = self.screen.get_size()
         # 1. Add Background
-        self.add_element(Image(w/2, h/2, w, h, Images.Background_1))
+        self.add_element(Image(w/2, h/2, w, h, Images.Background1))
 
         # 2. Title Text
         title_text = "Guess The Answer"

@@ -11,7 +11,7 @@ class SubmitButton(GameObject):
         super().__init__(x, y, 1 if is_p1 else 2)
 
         self.is_p1 = is_p1
-        self.size = 64
+        self.size = 60
         self.frames = ImageLoader.get_frames(Images.SubmitButton, 32, self.size, self.size)
     
     def draw(self, screen: Surface, state: GameState):

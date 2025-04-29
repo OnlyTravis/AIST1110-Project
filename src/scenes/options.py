@@ -18,7 +18,7 @@ class OptionScreen(Scene):
     def _add_ui_element(self):
         w, h = self.screen.get_size()
 
-        self.add_element(Image(w/2, h/2, w, h, Images.Background_1))
+        self.add_element(Image(w/2, h/2, w, h, Images.Background1))
         self.add_element(Text(w/2, 50, "Select Gamemode", font_size=50))
         self.add_element(Text(150, 150, "Gamemode : "))
         self.add_element(TextButton("Start Game", w/2, h-50, on_click=self._on_start_game, border_radius=10))
