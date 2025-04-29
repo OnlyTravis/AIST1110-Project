@@ -8,12 +8,17 @@ from src.classes.game_object import GameObject
 from src.sprites.letter import Letter
 
 class Player(GameObject):
-    def __init__(self, x: float, y: float, is_p1: bool):
+    def __init__(self, 
+                 x: float,
+                 y: float,
+                 is_p1: bool,
+                 movable_area: tuple):
         super().__init__(x, y, 0)
         self.speed: float = 500
         self.is_p1: bool = is_p1
         self.is_holding: bool = False
         self.holding: Letter = None
+        self.movable_area = movable_area
     
     def draw(self, screen: Surface, state: GameState):
         # 1. Draw Player
@@ -39,10 +44,19 @@ class Player(GameObject):
         vec.scale_to_length(self.speed * dt)
         self.move(vec.x, vec.y)
         
+        # 2. Check collision with wall & Move holding position
+        if self.x < self.movable_area[0]:
+            self.move_to(self.movable_area[0], self.y)
+        elif self.x > self.movable_area[2]:
+            self.move_to(self.movable_area[2], self.y)
+        if self.y < self.movable_area[1]:
+            self.move_to(self.x, self.movable_area[1])
+        elif self.y > self.movable_area[3]:
+            self.move_to(self.x, self.movable_area[3])
         if self.is_holding:
             self.holding.move_to(self.x, self.y)
 
-        # 2. Update Game State
+        # 3. Update Game State
         if self.is_p1:
             state.player1_pos = self.pos
         else:

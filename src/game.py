@@ -24,7 +24,7 @@ class Game:
         ImageLoader.load_images()
 
         # 4. Init API
-        GPTAPI.init_api()
+        #GPTAPI.init_api()
 
         self.scene = TitleScreen(self.screen, self.changeScene)
 

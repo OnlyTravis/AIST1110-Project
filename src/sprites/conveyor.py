@@ -5,8 +5,6 @@ from src.classes.game_object import GameObject
 from src.classes.state import GameState
 from src.sprites.letter import Letter
 
-LETTER_SEPARATION = 60
-
 class ConveyorBelt(GameObject):
     def __init__(self, 
                  x: int,
@@ -26,25 +24,47 @@ class ConveyorBelt(GameObject):
     def draw(self, screen: Surface, state: GameState):
         # 1.1 Draw Border
         if self.is_horizontal:
-            draw.rect(screen, "black", Rect(self.x, self.y-25, self.length, 50))
-            draw.rect(screen, "gray", Rect(self.x+5, self.y-20, self.length-10, 40))
+            draw.rect(screen, "black", Rect(self.x, self.y-40, self.length, 80))
+            draw.rect(screen, "gray", Rect(self.x, self.y-30, self.length, 60))
         else:
-            draw.rect(screen, "black", Rect(self.x-25, self.y, 50, self.length))
-            draw.rect(screen, "gray", Rect(self.x-20, self.y+5, 40, self.length-10))
+            draw.rect(screen, "black", Rect(self.x-40, self.y, 80, self.length))
+            draw.rect(screen, "gray", Rect(self.x-30, self.y, 60, self.length))
         
         # 1.2 Draw Conveyor segments
-        l = 20*self._animation_tick
+        SEPARATION = 30
+        l = SEPARATION*self._animation_tick
         if not self.is_forward:
-            l = 20-l
-        while abs(l) < self.length:
+            l = SEPARATION-l
+        while abs(l)+SEPARATION < self.length:
             if self.is_horizontal:
-                draw.line(screen, "black", (self.x+l, self.y-20), (self.x+l, self.y+20))
+                x, y = self.x + l, self.y
+                draw.line(screen, "black", (x, y-20), (x, y+20))
+                x += SEPARATION/2
+                if self.is_forward:
+                    draw.polygon(screen, (50, 50, 50), [(x-5, y-10), (x-5, y+10), (x+5, y)])
+                else:
+                    draw.polygon(screen, (50, 50, 50), [(x+5, y-10), (x+5, y+10), (x-5, y)])
             else:
-                draw.line(screen, "black", (self.x-20, self.y+l), (self.x+20, self.y+l))
-            l += 20
+                x, y = self.x, self.y + l
+                draw.line(screen, "black", (x-20, y), (x+20, y))
+                y += SEPARATION/2
+                if self.is_forward:
+                    draw.polygon(screen , (50, 50, 50), [(x-10, y-5), (x+10, y-5), (x, y+5)])
+                else:
+                    draw.polygon(screen , (50, 50, 50), [(x-10, y+5), (x+10, y+5), (x, y-5)])
+            l += SEPARATION
         
         # 2. Draw inner letters
         super().draw(screen, state)
+
+        # 3. Draw covers
+        COVER_COLOR = (20, 20, 20)
+        if self.is_horizontal:
+            draw.rect(screen, COVER_COLOR, (self.x, self.y-40, 50, 80))
+            draw.rect(screen, COVER_COLOR, (self.x+self.length-50, self.y-40, 50, 80))
+        else:
+            draw.rect(screen, COVER_COLOR, (self.x-40, self.y, 80, 50))
+            draw.rect(screen, COVER_COLOR, (self.x-40, self.y+self.length-50, 80, 50))
 
     def update(self, state: GameState, dt: float):
         # 1. Update conveyor animation
@@ -64,17 +84,23 @@ class ConveyorBelt(GameObject):
         self._time_since_new += dt
         if self._time_since_new > self.rate:
             self._time_since_new -= self.rate
-            self._add_letter()
+            self._add_letter(state)
         
         # 4. Update Letter
         for letter in self.inner_objects.sprites():
             letter.update(state, dt)
     
-    def _add_letter(self):
-        x = self.x + self.length if self.is_horizontal and not self.is_forward else self.x
-        y = self.y + self.length if not self.is_horizontal and not self.is_forward else self.y
+    def _add_letter(self, state: GameState):
+        x = (self.x if not self.is_horizontal else 
+             self.x + 25 if self.is_forward else 
+             self.x + self.length - 25)
+        y = (self.y if self.is_horizontal else
+             self.y + 25 if self.is_forward else 
+             self.y + self.length - 25)
         new_letter = Letter.random(x, y)
         self.inner_objects.add(new_letter)
+        state.letters.add(new_letter)
+
 
     def _check_letters(self):
         letters: list[Letter] = self.inner_objects.sprites()
@@ -85,15 +111,15 @@ class ConveyorBelt(GameObject):
         first = letters[0]
         if (self.is_forward):
             if (self.is_horizontal):
-                if (first.x > self.x + self.length):
+                if (first.x > self.x + self.length - 25):
                     first.kill()
             else:
-                if (first.y > self.y + self.length):
+                if (first.y > self.y + self.length - 25):
                     first.kill()
         else:
             if (self.is_horizontal):
-                if (first.x < self.x):
+                if (first.x < self.x + 25):
                     first.kill()
             else:
-                if (first.y < self.y):
+                if (first.y < self.y + 25):
                     first.kill()

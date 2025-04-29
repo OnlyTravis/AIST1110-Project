@@ -51,7 +51,6 @@ Please provide the question and answers in the following format:
 ...
 """
 
-# Things commented out to prevent wasting of api calls during coding / testing
 class GPTAPI():
     _client = None
     _buffer: list[Question] = []

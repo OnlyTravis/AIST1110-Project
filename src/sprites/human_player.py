@@ -5,8 +5,8 @@ from src.classes.state import GameState
 from src.sprites.player import Player
 
 class HumanPlayer(Player):
-    def __init__(self, x, y, is_p1):
-        super().__init__(x, y, is_p1)
+    def __init__(self, x, y, is_p1, movable_area):
+        super().__init__(x, y, is_p1, movable_area)
         
         # 1. Setup key binds
         if is_p1:

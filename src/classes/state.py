@@ -1,4 +1,5 @@
 from enum import Enum
+from pygame.sprite import Group
 
 from src.constants import QUESTION_TIMER
 
@@ -26,6 +27,7 @@ class GameState():
 
         self.question_number = 0
         self.timer = QUESTION_TIMER
+        self.letters = Group()
         self.game_state = States.BeforeStart
 
         self.gamemode: Gamemode = Gamemode.SinglePlayer
