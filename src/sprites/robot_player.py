@@ -11,7 +11,7 @@ class RobotPlayer(Player):
         self.navigating = False
         self.navigation_pos = (0, 0)
     
-    def _navigate_to(self, x, y):
+    def navigate_to(self, x, y):
         self.navigating = True
         self.navigation_pos = (x, y)
 

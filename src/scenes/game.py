@@ -65,6 +65,11 @@ class GameScreen(Scene):
         self.state.player1_pos = (self.player1.x, self.player1.y)
         self.state.gamemode = gamemode
 
+    def robot_update(self):
+        # 1. Get available answers
+        # 2. 
+        pass
+
     def draw(self):
         self.screen.fill(color=(200,200,200))
         
