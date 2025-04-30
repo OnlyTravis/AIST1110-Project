@@ -30,7 +30,7 @@ tmp_questions = [
     Question("Name a yellow fruit", [
         Answer("Banana", 51),
         Answer("Lemon", 20),
-        Answer("Manga", 13),
+        Answer("Mango", 13),
         Answer("Pineapple", 8),
         Answer("Pear", 6),
         Answer("Starfruit", 2)
@@ -89,14 +89,13 @@ class GPTAPI():
 
             # 2. Processing Texts & Appending questions to buffer
             full_text = response.choices[0].message.content
-            print(full_text)
             lines: list[str] = []
             i = 0
             for line in full_text.splitlines():
                 if line.strip() == "":
                     continue
                 
-                lines.append(line)
+                lines.append(line.strip())
                 i += 1
 
                 if i == 7:

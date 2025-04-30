@@ -32,8 +32,7 @@ class GameObject(Sprite, EventListener):
 
     def update(self, state, dt):
         if self.recursive:
-            for obj in self.inner_objects.sprites():
-                obj.update(state, dt)
+            self.inner_objects.update(state=state, dt=dt)
 
     def on_interact(self, player, state: GameState):
         pass

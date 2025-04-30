@@ -1,6 +1,5 @@
 from enum import Enum
 
-from src.classes.event import GameEvent
 from src.classes.state import GameState
 from src.sprites.player import Player
 

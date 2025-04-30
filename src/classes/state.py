@@ -25,7 +25,6 @@ class GameState():
         self.player1_score = 0
         self.player2_score = 0
 
-        self.question_number = 0
         self.timer = QUESTION_TIMER
         self.letters = Group()
         self.game_state = States.BeforeStart

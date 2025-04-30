@@ -1,5 +1,6 @@
 from math import dist
 from pygame import draw, transform
+from pygame.sprite import Group
 from pygame.surface import Surface
 
 from src.classes.images import ImageLoader, Images
@@ -24,11 +25,13 @@ class SubmitArea(GameObject):
         self.ghost_pos = -1
         self.is_near_player = False  # To detect when player_near is changed and update displays
         self.letter_count = 0
+
         frame_indice = [0, 1, 2] if is_p1 else [3, 4, 5]
         self.frames = ImageLoader.get_frames(Images.SubmitTable, 32, 80, 80, frame_indice)
         self.frames[1] = transform.scale(self.frames[1], (self.width-160, 80))
+
+        self.falling = Group()        
         self.add_event_listener(GameEvent.SubmitButtonPressed, self._on_submit)
-        self.add_event_listener(GameEvent.SubmitStatus, self._after_submit)
     
     def draw(self, screen: Surface, state: GameState):
         # 1. Draw Table
@@ -39,6 +42,8 @@ class SubmitArea(GameObject):
 
         # 2. Draw Letters on table
         for obj in self.inner_objects.sprites():
+            obj.draw(screen, state)
+        for obj in self.falling.sprites():
             obj.draw(screen, state)
         
         # 3. Draw ghost if player is near and holding letter
@@ -52,11 +57,12 @@ class SubmitArea(GameObject):
                 draw.rect(screen, "blue", (x-offset, self.y-offset-5, 2*offset, 2*offset), border_radius=10)
 
     def update(self, state: GameState, dt: float):
+        # 1. Update self.interactable
         self._update_interactability(state)
 
+        # 2. Update Letter position if needed
         can_interact = (self.interactable != 0)
         is_near_player = ((self.is_p1 and state.player1_near == self) or (not self.is_p1 and state.player2_near == self))
-
         if can_interact:
             if is_near_player:
                 # Player can place letter
@@ -74,6 +80,10 @@ class SubmitArea(GameObject):
                 self.ghost_pos = -1
                 self._update_letter_positions(state)
         self.is_near_player = is_near_player
+
+        # 3. Update Letters
+        super().update(state, dt)
+        self.falling.update(state=state, dt=dt)
             
     
     def on_interact(self, player: Player, state: GameState):
@@ -120,14 +130,11 @@ class SubmitArea(GameObject):
             "is_p1": self.is_p1,
             "word": self.get_word()
         })
-    
-    def _after_submit(self, event):
-        if event.is_p1 != self.is_p1 or not event.is_correct:
-            return
 
         for letter in self.inner_objects:
-            letter.kill()
-
+            self.falling.add(letter)
+            self.inner_objects.remove(letter)
+            letter.fall()
 
     def _get_ghost_pos(self, player_pos: tuple) -> int:
         """

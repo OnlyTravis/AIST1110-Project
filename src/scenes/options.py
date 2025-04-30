@@ -4,6 +4,7 @@ from src.classes.scene import Scene
 from src.classes.state import Gamemode
 from src.classes.images import Images
 from src.classes.scene import Scenes
+from src.classes.save_data import SaveDataManager, SaveData
 from src.ui_element.text_button import TextButton
 from src.ui_element.text import Text
 from src.ui_element.image import Image
@@ -51,4 +52,7 @@ class OptionScreen(Scene):
         button.text.set_color("red")
 
     def _on_start_game(self):
-        self.exit_to(Scenes.TutorialScreen, gamemode=self.selected_gamemode)
+        if SaveDataManager.get_value(SaveData.SkipTutorial):
+            self.exit_to(Scenes.GameScreen, gamemode=self.selected_gamemode)
+        else:
+            self.exit_to(Scenes.TutorialScreen, gamemode=self.selected_gamemode)

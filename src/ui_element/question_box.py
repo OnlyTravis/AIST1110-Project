@@ -2,7 +2,7 @@ from pygame import draw, Rect
 from pygame.surface import Surface
 from pygame.sprite import Group
 
-from src.classes.state import GameState
+from src.classes.images import ImageLoader, Images
 from src.classes.data_classes import Question
 from src.classes.event import GameEvent
 from src.classes.ui_element import UIElement
@@ -12,9 +12,11 @@ class QuestionBox(UIElement):
     def __init__(self, x, y):
         super().__init__(x, y, recursive=True)
         self.w = 800
-        self.h = 200
-        self.question_height = 70
-        self.padding = 5
+        self.h = 195
+        self.question_height = 80
+        self.padding = 15
+        
+        self.img = ImageLoader.get(Images.QuestionBox, self.w, self.h)
 
         self.question: Question = None
         self.question_visible = False
@@ -26,12 +28,10 @@ class QuestionBox(UIElement):
         self.add_event_listener(GameEvent.GameStart, self._on_start_game)
         self.add_event_listener(GameEvent.UpdateQuestion, self._on_update_question)
         self.add_event_listener(GameEvent.SubmitStatus, self._on_submit)
+        self.add_event_listener(GameEvent.RevealAnswers, self._on_reveal_all)
 
     def draw(self, screen: Surface):
-        draw.rect(screen, "yellow", (self.x-self.w/2, self.y-self.h/2, self.w, self.h))
-        draw.rect(screen, "black", (self.x-self.w/2, self.y-self.h/2, self.w, self.question_height))
-        for rect in self.rects:
-            draw.rect(screen, "black", rect)
+        screen.blit(self.img, (self.x-self.w/2, self.y-self.h/2))
 
         for answer in self.answers.sprites():
             answer.draw(screen)
@@ -53,28 +53,29 @@ class QuestionBox(UIElement):
         self.revealed[index] = True
         answer_text: Text = self.answers.sprites()[index]
         answer_text.set_text(f"{index+1}. {self.question.answers[index].text}")
+    
+    def hide_answer(self, index):
+        if not self.revealed[index]:
+            return
+
+        self.revealed[index] = False
+        answer_text: Text = self.answers.sprites()[index]
+        answer_text.set_text(f"{index+1}. ")
 
     def _set_up_ui(self):
-        self.add_inner_element(Text(self.x, self.y-self.h/2+self.question_height/2, "3", "white", 40))
-        self.rects: list[Rect] = []
+        self.add_inner_element(Text(self.x, self.y-self.h/2+self.question_height/2, "3", "black", 40))
         self.answers = Group()
         w = (self.w - 3*self.padding)/2
         h = (self.h - self.question_height - 4*self.padding)/3
         for i in range(6):
             x = i%2
             y = int(i/2)
-            rect = Rect(
-                self.x - self.w/2 + self.padding + (w+self.padding)*x,
-                self.y - self.h/2 + self.question_height + self.padding + (h+self.padding)*y,
-                w,
-                h
-            )
-            self.rects.append(rect)
             self.answers.add(Text(
-                x=rect.x, 
-                y=rect.y+h/2,
+                x=self.x - self.w/2 + self.padding + (w+self.padding)*x+8, 
+                y=self.y - self.h/2 + self.question_height + self.padding + (h+self.padding)*y,
                 text=f"{i+1}. ", 
-                color="white",
+                color="black",
+                font_size=25,
                 align=TextAlign.Start
             ))
 
@@ -90,7 +91,16 @@ class QuestionBox(UIElement):
         else:
             self._set_question_text(self.question.text)
 
+    def _on_reveal_all(self, event):
+        for i in range(6):
+            self.reveal_answer(i)
+
     def _on_update_question(self, event):
+        # 1. Hide all answers
+        for i in range(6):
+            self.hide_answer(i)
+
+        # 2. Update Question display
         self.question = event.question
         if self.question_visible:
             self._set_question_text(event.question.text)

@@ -7,13 +7,14 @@ from pygame.event import Event, EventType
 
 class GameEvent(Enum):
     GameStart = USEREVENT
-    UpdateQuestion = USEREVENT+1
-    GameEnd = USEREVENT+2
-    SubmitButtonPressed = USEREVENT+3  # On Submit Button Press
-    SubmitWord = USEREVENT+4  # Contains word from SubmitArea
-    SubmitStatus = USEREVENT+5  # After Checking submition
-    GamePause = USEREVENT+6
-    GameResume = USEREVENT+7
+    GameEnd = USEREVENT+1
+    UpdateQuestion = USEREVENT+2
+    RevealAnswers = USEREVENT+3
+    SubmitButtonPressed = USEREVENT+4  # On Submit Button Press
+    SubmitWord = USEREVENT+5  # Contains word from SubmitArea
+    SubmitStatus = USEREVENT+6  # After Checking submition
+    GamePause = USEREVENT+7
+    GameResume = USEREVENT+8
 
     def post(self, dict: dict={}):
         event.post(Event(self.value, **dict))

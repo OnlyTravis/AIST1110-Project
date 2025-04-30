@@ -4,6 +4,7 @@ from src.classes.gpt_api import GPTAPI
 from src.classes.event import event_handler
 from src.classes.images import ImageLoader
 from src.classes.scene import Scenes
+from src.classes.save_data import SaveDataManager
 from src.scenes.title import TitleScreen
 from src.scenes.options import OptionScreen
 from src.scenes.tutorial import TutorialScreen
@@ -24,7 +25,8 @@ class Game:
         ImageLoader.load_images()
 
         # 4. Init API
-        #GPTAPI.init_api()
+        GPTAPI.init_api()
+        SaveDataManager.init_data()
 
         self.scene = TitleScreen(self.screen, self.changeScene)
 

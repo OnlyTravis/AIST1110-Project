@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from pygame import KEYDOWN
+from pygame import KEYDOWN, K_ESCAPE
 from pygame.surface import Surface
 from pygame.sprite import Group
 from pygame.event import Event
@@ -20,6 +20,7 @@ from src.ui_element.question_box import QuestionBox
 from src.ui_element.result_display import ResultDisplay
 from src.ui_element.score_display import ScoreDisplay
 from src.ui_element.image_button import ImageButton
+from src.ui_element.announce import Annouce
 from src.constants import INTERACT_DISTANCE
 
 class GameScreen(Scene):
@@ -37,12 +38,13 @@ class GameScreen(Scene):
 
     def _init_ui(self):
         w, h = self.screen.get_size()
+        self.background = Image(w/2, h/2, w, h, Images.Background2)
         self.add_element(QuestionBox(w/2, 110))
-        self.add_element(ImageButton(w-50, 50, 70, 70, Images.PauseButton, self._on_pause))
-        self.add_element(ScoreDisplay(100, 50, True))
-        self.add_element(ScoreDisplay(w-100, 50, False))
+        self.add_element(ScoreDisplay(100, 100, True))
+        self.add_element(ScoreDisplay(w-100, 100, False))
         self.add_element(Image(100, h-60, 80, 80, Images.ConveyorJunction))
         self.add_element(Image(w-100, h-60, 80, 80, Images.ConveyorJunction, 90))
+        self.add_element(ImageButton(w-50, 50, 70, 70, Images.PauseButton, self._on_pause))
 
     def _init_objects(self):
         w, h = self.screen.get_size()
@@ -73,7 +75,7 @@ class GameScreen(Scene):
         pass
 
     def draw(self):
-        self.screen.fill(color=(200,200,200))
+        self.background.draw(self.screen)
         
         for obj in self.objs.sprites():
             obj.draw(self.screen, self.state)
@@ -83,6 +85,7 @@ class GameScreen(Scene):
         super().draw()
 
     def update(self, dt):
+        dt 
         if self.state.game_state == States.Playing:
             self._check_player_near(self.objs.sprites())
 
@@ -95,17 +98,31 @@ class GameScreen(Scene):
 
         super().update(dt)
     
+    def exit(self):
+        self.background.kill()
+        for obj in self.objs.sprites():
+            obj.kill()
+        self.player1.kill()
+        self.player2.kill()
+        super().exit()
+    
     def _handle_key_down(self, event: Event):
         """
         Handles KEYDOWN events (e.g. menu_open...)
         """
-        pass
+        if event.key == K_ESCAPE:
+            self._on_pause()
 
     def _on_game_start(self, event: Event):
         """
         Change GameState, Display first question
         """
         self.state.game_state = States.Playing
+        w, h = self.screen.get_size()
+    
+    def _on_game_end(self, event: Event):
+        w, h = self.screen.get_size()
+        self.add_element(Annouce(w/2, h/2, "Game Finished", duration=2.5))
 
     def _on_submit(self, event: Event):
         # Add Correct/Incorrect Display

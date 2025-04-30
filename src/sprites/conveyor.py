@@ -6,6 +6,8 @@ from src.classes.images import ImageLoader, Images
 from src.classes.state import GameState
 from src.sprites.letter import Letter
 
+SEPARATION = 30
+
 class ConveyorBelt(GameObject):
     def __init__(self, 
                  x: int,
@@ -15,8 +17,8 @@ class ConveyorBelt(GameObject):
                  is_forward=True):
         super().__init__(x, y, 0, True)
         self.length: int = length
-        self.rate: float = 0.7
-        self.speed: int = 6
+        self.rate: float = 0.6
+        self.speed: int = 100
         self.is_horizontal = is_horizontal
         self.is_forward = is_forward
         self._animation_tick = 0
@@ -36,7 +38,6 @@ class ConveyorBelt(GameObject):
             draw.rect(screen, "gray", Rect(self.x-30, self.y+25, 60, self.length-50))
         
         # 1.2 Draw Conveyor segments
-        SEPARATION = 30
         l = 25+SEPARATION*self._animation_tick
         if not self.is_forward:
             l = 50+SEPARATION-l
@@ -77,14 +78,14 @@ class ConveyorBelt(GameObject):
 
     def update(self, state: GameState, dt: float):
         # 1. Update conveyor animation
-        self._animation_tick += 0.01*self.speed
+        self._animation_tick += self.speed/SEPARATION*dt
         if (self._animation_tick >= 1):
             self._animation_tick -= 1
         
         # 2. Move Letters on the conveyor belt
         dir = 2*self.is_forward-1
-        dx = 0.2*self.speed*dir if self.is_horizontal else 0
-        dy = 0 if self.is_horizontal else 0.2*self.speed*dir
+        dx = self.speed*dir*dt if self.is_horizontal else 0
+        dy = 0 if self.is_horizontal else self.speed*dir*dt
         for letter in self.inner_objects.sprites():
             letter.move(dx, dy)
 

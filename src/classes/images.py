@@ -2,14 +2,20 @@ from enum import Enum
 from pygame import image, Surface, Rect, transform, SRCALPHA
 
 class Images(Enum):
-    TrashCan = "assets/trash_can.png"
-    Letter = "assets/letter.png"
-    SubmitButton = "assets/submit_button.png"
-    PauseButton = "assets/pause_button.png"
-    Background1 = "assets/background_1.png"
-    ConveyorHead = "assets/conveyor_head.png"
-    ConveyorJunction = "assets/conveyor_junction.png"
-    SubmitTable = "assets/submit_table.png"
+    TrashCan = "assets/imgs/trash_can.png"
+    Letter = "assets/imgs/letter.png"
+    SubmitButton = "assets/imgs/submit_button.png"
+    PauseButton = "assets/imgs/pause_button.png"
+    Background1 = "assets/imgs/background_1.png"
+    Background2 = "assets/imgs/background_2.png"
+    Tutorial1 = "assets/imgs/tutorial_1.png"
+    Tutorial2 = "assets/imgs/tutorial_2.png"
+    ConveyorHead = "assets/imgs/conveyor_head.png"
+    ConveyorJunction = "assets/imgs/conveyor_junction.png"
+    QuestionBox = "assets/imgs/question_box.png"
+    SubmitTable = "assets/imgs/submit_table.png"
+    ScoreDisplay = "assets/imgs/score_display.png"
+    Player = "assets/imgs/player.png"
 
 class ImageLoader:
     _images: dict[Images, Surface] = {}
