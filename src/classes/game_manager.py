@@ -76,7 +76,7 @@ class GameManager(EventListener):
         is_correct = (index != -1) and not self.answered[index]
         if is_correct:
             self.answered[index] = True
-            score = self.question.answers[index].score
+            score = self.question.answers[index].score + len(self.question.answers[index].text)
             if event.is_p1:
                 self.state.player1_score += score
             else:

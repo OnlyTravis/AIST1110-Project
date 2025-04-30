@@ -47,8 +47,10 @@ class TutorialScreen(Scene):
             self.page_ele.add(Text(50, 130, "to the question by assembling the correct word.", align=TextAlign.Start))
             self.page_ele.add(Text(50, 170, "If the answer is in two words, the spaces can be ignored.", align=TextAlign.Start))
             self.page_ele.add(Text(50, 200, "(e.g. apple pie -> applepie)", align=TextAlign.Start))
-            self.page_ele.add(Text(50, 520, "Players can then submit their answer by", align=TextAlign.Start))
-            self.page_ele.add(Text(50, 550, "interacting with the submit button", align=TextAlign.Start))
+            self.page_ele.add(Text(50, 480, "Players can then submit their answer by", align=TextAlign.Start))
+            self.page_ele.add(Text(50, 510, "interacting with the submit button", align=TextAlign.Start))
+            self.page_ele.add(Text(50, 550, "Bonus point will be awarded ", align=TextAlign.Start))
+            self.page_ele.add(Text(50, 580, "based on length of answer", align=TextAlign.Start))
             self.page_ele.add(TextButton("Previouse Page", w/2 - 200, h-80, self.previous_page))
             self.page_ele.add(TextButton("Start Game", w/2 + 200, h-80, self.start_game))
 
