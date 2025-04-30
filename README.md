@@ -1,7 +1,7 @@
 # Group Project for AIST1110
 
 # To-do list : 
-- Bonus points based on word length (to balance out the game)
+- Bonus points based on word length (to balance out the game) -> how about assigning points to each letter like in Scrabble?
 - Pause Screen
 - End Screen
 - annouce function in game scene
