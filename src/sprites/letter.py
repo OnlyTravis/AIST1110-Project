@@ -25,12 +25,13 @@ class Letter(GameObject):
         self.vy = 0
     
     @classmethod
-    def random(cls, x: float, y: float, size=45, interactable=3):
+    def random(cls, x: float, y: float, answers: list[str] = [], size=45, interactable=3):
         """
-        Creates a Letter Object with random attributes.
-        (e.g. Character, Score[if we add later])
+        Creates a Letter Object with random character.
+        Providing a list of answers will increase the chance
+        of characters in the answers being chosen
         """
-        return cls(choice(ascii_uppercase), x, y, size, interactable)
+        return cls(choice(ascii_uppercase+"".join(answers)), x, y, size, interactable)
     
     def set_char(self, chr: str):
         """

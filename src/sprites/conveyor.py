@@ -2,8 +2,10 @@ from pygame import draw, transform, Rect
 from pygame.surface import Surface
 
 from src.classes.game_object import GameObject
+from src.classes.event import GameEvent
 from src.classes.images import ImageLoader, Images
 from src.classes.state import GameState
+from src.classes.data_classes import Question
 from src.sprites.letter import Letter
 
 SEPARATION = 30
@@ -16,17 +18,23 @@ class ConveyorBelt(GameObject):
                  is_horizontal: bool,
                  is_forward=True):
         super().__init__(x, y, 0, True)
+
         self.length: int = length
         self.rate: float = 0.6
         self.speed: int = 100
         self.is_horizontal = is_horizontal
         self.is_forward = is_forward
+
         self._animation_tick = 0
         self._time_since_new = 0
+
         self.head = ImageLoader.get(Images.ConveyorHead, 80, 80)
         if self.is_horizontal:
             self.head = transform.rotate(self.head, 90)
         self.tail = transform.flip(self.head, True, True)
+
+        self.answer_list: list[str] = []
+        self.add_event_listener(GameEvent.UpdateQuestion, self.update_answer_list)
     
     def draw(self, screen: Surface, state: GameState):
         # 1.1 Draw Border
@@ -64,17 +72,13 @@ class ConveyorBelt(GameObject):
         super().draw(screen, state)
 
         # 3. Draw covers
-        COVER_COLOR = (20, 20, 20)
         if self.is_horizontal:
             screen.blit(self.head, (self.x, self.y-40))
             screen.blit(self.tail, (self.x+self.length-80, self.y-40))
-            #draw.rect(screen, COVER_COLOR, (self.x, self.y-40, 50, 80))
-            #draw.rect(screen, COVER_COLOR, (self.x+self.length-50, self.y-40, 50, 80))
         else:
             screen.blit(self.head, (self.x-40, self.y))
             screen.blit(self.tail, (self.x-40, self.y+self.length-80))
-            #draw.rect(screen, COVER_COLOR, (self.x-40, self.y, 80, 50))
-            #draw.rect(screen, COVER_COLOR, (self.x-40, self.y+self.length-50, 80, 50))
+
 
     def update(self, state: GameState, dt: float):
         # 1. Update conveyor animation
@@ -107,7 +111,7 @@ class ConveyorBelt(GameObject):
         y = (self.y if self.is_horizontal else
              self.y + 25 if self.is_forward else 
              self.y + self.length - 25)
-        new_letter = Letter.random(x, y)
+        new_letter = Letter.random(x, y, self.answer_list)
         self.inner_objects.add(new_letter)
         state.letters.add(new_letter)
 
@@ -133,3 +137,7 @@ class ConveyorBelt(GameObject):
             else:
                 if (first.y < self.y + 25):
                     first.kill()
+    
+    def update_answer_list(self, event):
+        question: Question = event.question
+        self.answer_list = [answer.text.upper() for answer in question.answers]
