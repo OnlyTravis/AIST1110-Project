@@ -26,7 +26,7 @@ class RobotPlayer(Player):
         super().__init__(x, y, False, movable_area)
         self.interact_next_frame = False
         self.action = Action.Idle
-        self.idle_timer = 1
+        self.idle_timer = 10
 
         self.navigating = False
         self.navigating_to = (0, 0)
@@ -145,7 +145,7 @@ class RobotPlayer(Player):
                     self.interact(state, state.player2_near)
                     self.submitted = ""
                     self.action = Action.Idle
-                    self.idle_timer = 2
+                    self.idle_timer = 7
             
             case Action.TrashHolding:
                 if self.navigating == False and state.player2_near != None:

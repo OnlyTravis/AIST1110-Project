@@ -2,31 +2,11 @@ from dotenv import load_dotenv
 from openai import AzureOpenAI
 from typing import Callable
 import os
-from time import sleep
 from threading import Thread
 
 from src.classes.data_classes import Question, Answer
 
-load_dotenv()
-AZURE_API_KEY = os.getenv("AZURE_API_KEY")
-
 tmp_questions = [
-    Question("Name a asdsad fruit", [
-        Answer("asg", 51),
-        Answer("Legdsgmon", 20),
-        Answer("gs", 13),
-        Answer("Pidsdsfneapple", 8),
-        Answer("asdfsa", 6),
-        Answer("vcx", 2)
-    ]),
-    Question("Name a aaaa fruit", [
-        Answer("aaa", 51),
-        Answer("Levvvmoan", 20),
-        Answer("vv", 13),
-        Answer("vvaa", 8),
-        Answer("aasasd", 6),
-        Answer("rtrtr", 2)
-    ]),
     Question("Name a yellow fruit", [
         Answer("Banana", 51),
         Answer("Lemon", 20),
@@ -58,6 +38,15 @@ class GPTAPI():
 
     @classmethod
     def init_api(cls):
+        load_dotenv()
+        AZURE_API_KEY = os.getenv("AZURE_API_KEY")
+
+        if AZURE_API_KEY == None:
+            key = input("Please Provide an api key: ")
+            with open(".env", "w") as env:
+                env.write(f"AZURE_API_KEY = {key}")
+            AZURE_API_KEY = key
+
         cls._client = AzureOpenAI(
             azure_endpoint="https://cuhk-apip.azure-api.net",
             api_version="2024-02-01",  # Use appropriate version for your model
@@ -91,7 +80,6 @@ class GPTAPI():
             lines: list[str] = []
             i = 0
             for line in full_text.splitlines():
-                print(line)
                 if line.strip() == "":
                     continue
                 
@@ -119,10 +107,12 @@ class GPTAPI():
                 cls.on_recieve = None
         Thread(target=fetch).start()
 
+    """
     # An overwrite for the function _fetch_questions to avoid wasting api calls in testing
     @classmethod
     def _fetch_questions(cls):
-        cls._buffer = tmp_questions*2
+        cls._buffer = tmp_questions*6
+    """
 
     @classmethod
     def get_question(cls, on_recieve: Callable[[Question], None]) -> None:

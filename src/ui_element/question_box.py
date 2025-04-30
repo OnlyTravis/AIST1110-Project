@@ -63,7 +63,7 @@ class QuestionBox(UIElement):
         answer_text.set_text(f"{index+1}. ")
 
     def _set_up_ui(self):
-        self.add_inner_element(Text(self.x, self.y-self.h/2+self.question_height/2, "3", "black", 35))
+        self.add_inner_element(Text(self.x, self.y-self.h/2+self.question_height/2, "3", "black", 25))
         self.answers = Group()
         w = (self.w - 3*self.padding)/2
         h = (self.h - self.question_height - 4*self.padding)/3
