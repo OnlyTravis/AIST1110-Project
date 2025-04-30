@@ -10,6 +10,7 @@ from src.classes.state import States, GameState, Gamemode
 from src.classes.scene import Scene
 from src.classes.images import Images
 from src.sprites.human_player import HumanPlayer
+from src.sprites.robot_player import RobotPlayer
 from src.sprites.conveyor import ConveyorBelt
 from src.sprites.trash_can import TrashCan
 from src.sprites.submit_area import SubmitArea
@@ -53,7 +54,7 @@ class GameScreen(Scene):
         self.objs.add(ConveyorBelt(w-100, 220, h-320, False))
         self.objs.add(ConveyorBelt(140, h-60, w/2-140, True))
         self.objs.add(ConveyorBelt(w/2, h-60, w/2-140, True, False))
-        self.objs.add(TrashCan(w/2, 250))
+        self.objs.add(TrashCan(w/2, 270))
         self.objs.add(SubmitArea(0.25*w+50, 250, w/2-200, True))
         self.objs.add(SubmitArea(0.75*w-50, 250, w/2-200, False))
         self.objs.add(SubmitButton(w/2-70, 270))
@@ -63,16 +64,14 @@ class GameScreen(Scene):
         spawnpoint = ((0.25*w+50, h/2+95), (0.75*w-50, h/2+95))
         movable_area = (140, 290, w-140, h-100)
         self.player1 = HumanPlayer(spawnpoint[0][0], spawnpoint[0][1], True, movable_area)
-        self.player2 = HumanPlayer(spawnpoint[1][0], spawnpoint[1][1], False, movable_area)
+        if self.state.gamemode == Gamemode.LocalMultiplayer:
+            self.player2 = HumanPlayer(spawnpoint[1][0], spawnpoint[1][1], False, movable_area)
+        else:
+            self.player2 = RobotPlayer(spawnpoint[1][0], spawnpoint[1][1], movable_area)
 
     def _init_game_state(self, gamemode):
         self.state.player1_pos = (self.player1.x, self.player1.y)
         self.state.gamemode = gamemode
-
-    def robot_update(self):
-        # 1. Get available answers
-        # 2. 
-        pass
 
     def draw(self):
         self.background.draw(self.screen)
@@ -85,7 +84,6 @@ class GameScreen(Scene):
         super().draw()
 
     def update(self, dt):
-        dt 
         if self.state.game_state == States.Playing:
             self._check_player_near(self.objs.sprites())
 
@@ -155,9 +153,6 @@ class GameScreen(Scene):
                     d1 = obj.distance_to(self.state.player1_pos)
                     if d1 < closest1[0]:
                         closest1 = (d1, obj)
-
-                if self.state.gamemode != Gamemode.LocalMultiplayer:
-                    continue
 
                 if obj.can_interact_with_p2:
                     d2 = obj.distance_to(self.state.player2_pos)
