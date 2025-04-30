@@ -65,12 +65,17 @@ class RobotPlayer(Player):
         dy = self.navigating_to[1]-self.y
 
         if abs(self.x - self.movable_area[0]) < 2 and dx < 0:
-            dx = -0.01
+            dx = 0
         if abs(self.x - self.movable_area[2]) < 2 and dx > 0:
-            dx = 0.01
+            dx = 0
         if abs(self.y - self.movable_area[1]) < 2 and dy < 0:
-            dy = -0.01
+            dy = 0
         if abs(self.y - self.movable_area[3]) < 2 and dy > 0:
+            dy = 0
+
+        if dx == 0:
+            dx = 0.01
+        if dy == 0:
             dy = 0.01
 
         if 0.5 < abs(dx/dy) < 2:
@@ -86,8 +91,6 @@ class RobotPlayer(Player):
             self.navigating = False
 
     def update(self, state: GameState, dt: float):
-        print(self.available_answer)
-        print(self.target_answer)
         # 1. Choose a target answer if none is selected
         if self.target_answer == "" and len(self.available_answer) != 0:
             self.target_answer = choice(self.available_answer)
@@ -114,6 +117,7 @@ class RobotPlayer(Player):
                 letters = self.target_letter.sprites()
                 if len(letters) == 0 or letters[0].chr != self.target_chr:
                     self.action = Action.Idle
+                    self.idle_timer = 1
                     return
 
                 # Pick up letter if near
@@ -121,6 +125,7 @@ class RobotPlayer(Player):
                     self.target_letter.empty()
                     self.interact(state, state.player2_near)
                     self.action = Action.Idle
+                    self.idle_timer = 1
                     return
             
                 # Navigate to new position of letter
@@ -140,11 +145,13 @@ class RobotPlayer(Player):
                     self.interact(state, state.player2_near)
                     self.submitted = ""
                     self.action = Action.Idle
+                    self.idle_timer = 2
             
             case Action.TrashHolding:
                 if self.navigating == False and state.player2_near != None:
                     self.interact(state, state.player2_near)
                     self.action = Action.Idle
+                    self.idle_timer = 1
 
             case Action.SearchingLetter:
                 letters: list[Letter] = state.letters.sprites()

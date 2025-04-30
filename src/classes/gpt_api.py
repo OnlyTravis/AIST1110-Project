@@ -41,12 +41,11 @@ PROMPT = """
 Create {n} simple questions for a game similar to Family Feud.
 Each question should have 6 most popular answers and 
 the answers should be mostly in 1 word.
-You don't have to provide the numbers.
 You don't have to include the question number.
 Please provide the question and answers in the following format:
 <Raw Question Text>
-<Answer 1>
-<Answer 2>...
+<Answer 1> <Count>
+<Answer 2> <Count>...
 <Raw Question Text>
 ...
 """
@@ -79,12 +78,12 @@ class GPTAPI():
         def fetch():
             # 1. Calling API
             response = cls._client.chat.completions.create(
-                model="gpt-4o",  # or "gpt-4o"
+                model="gpt-4o",
                 messages=[
                     {"role": "system", "content": "You are a helpful assistant."},
                     {"role": "user", "content": PROMPT.format(n=5)}
                 ],
-                temperature=0.7,  # Control response creativity (0-1)
+                temperature=0.7,
             )
 
             # 2. Processing Texts & Appending questions to buffer
@@ -92,17 +91,24 @@ class GPTAPI():
             lines: list[str] = []
             i = 0
             for line in full_text.splitlines():
+                print(line)
                 if line.strip() == "":
                     continue
                 
-                lines.append(line.strip())
+                lines.append(line)
                 i += 1
 
                 if i == 7:
-                    # Todo make a random good distrabution for scores
+                    answers = []
+                    for line_ in lines[1:7]:
+                        split = line_.strip().split(" ")
+                        num = int(split[-1])
+                        answer = "".join(split[0 : len(split)-1]).replace(" ", "")
+                        answers.append(Answer(answer, num))
+
                     cls._buffer.append(Question(
                         lines[0],
-                        [Answer(line, 20) for line in lines[1:6]]
+                        answers
                     ))
                     i = 0
                     lines = []

@@ -32,7 +32,7 @@ class UIElement(Sprite, EventListener):
     def kill(self):
         self.remove_all_listeners()
         if self.recursive:
-            for obj in self.inner_objects.sprites():
+            for obj in self.inner_elements.sprites():
                 obj.kill()
         super().kill()
 

@@ -7,7 +7,7 @@ from pygame.event import Event
 from src.classes.game_manager import GameManager, GameEvent
 from src.classes.game_object import GameObject
 from src.classes.state import States, GameState, Gamemode
-from src.classes.scene import Scene
+from src.classes.scene import Scene, Scenes
 from src.classes.images import Images
 from src.sprites.human_player import HumanPlayer
 from src.sprites.robot_player import RobotPlayer
@@ -35,6 +35,7 @@ class GameScreen(Scene):
         self._init_game_state(gamemode)
         self.add_event_listener(KEYDOWN, self._handle_key_down)
         self.add_event_listener(GameEvent.GameStart, self._on_game_start)
+        self.add_event_listener(GameEvent.GameEnd, self._on_game_end)
         self.add_event_listener(GameEvent.SubmitStatus, self._on_submit)
 
     def _init_ui(self):
@@ -45,7 +46,6 @@ class GameScreen(Scene):
         self.add_element(ScoreDisplay(w-100, 100, False))
         self.add_element(Image(100, h-60, 80, 80, Images.ConveyorJunction))
         self.add_element(Image(w-100, h-60, 80, 80, Images.ConveyorJunction, 90))
-        self.add_element(ImageButton(w-50, 50, 70, 70, Images.PauseButton, self._on_pause))
 
     def _init_objects(self):
         w, h = self.screen.get_size()
@@ -120,16 +120,13 @@ class GameScreen(Scene):
     
     def _on_game_end(self, event: Event):
         w, h = self.screen.get_size()
-        self.add_element(Annouce(w/2, h/2, "Game Finished", duration=2.5))
+        self.exit_to(Scenes.EndingScreen, state=self.state)
 
     def _on_submit(self, event: Event):
         # Add Correct/Incorrect Display
         w, h = self.screen.get_size()
         x = 0.25*w+50 if event.is_p1 else 0.75*w-50
         self.add_element(ResultDisplay(x, h/2+80, event.is_correct))
-    
-    def _on_pause(self):
-        GameEvent.GamePause.post()
 
     def _check_player_near(self, objs):
         """

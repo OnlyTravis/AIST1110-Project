@@ -4,7 +4,6 @@ from enum import Enum
 class SaveData(Enum):
     SkipTutorial = "skip_tutorial"
     HighScore = "high_score"
-    MostAnswered = "most_answered"
 
 class SaveDataManager:
     @classmethod

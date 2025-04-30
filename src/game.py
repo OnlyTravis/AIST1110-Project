@@ -9,6 +9,7 @@ from src.scenes.title import TitleScreen
 from src.scenes.options import OptionScreen
 from src.scenes.tutorial import TutorialScreen
 from src.scenes.game import GameScreen
+from src.scenes.end import EndingScreen
 from src.constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 
 class Game:
@@ -52,3 +53,5 @@ class Game:
                 self.scene = TutorialScreen(self.screen, self.changeScene, **args)
             case Scenes.GameScreen:
                 self.scene = GameScreen(self.screen, self.changeScene, **args)
+            case Scenes.EndingScreen:
+                self.scene = EndingScreen(self.screen, self.changeScene, **args)

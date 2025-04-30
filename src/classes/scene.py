@@ -11,6 +11,7 @@ class Scenes(Enum):
     OptionScreen = 1
     TutorialScreen = 2
     GameScreen = 3
+    EndingScreen = 4
 
 class Scene(EventListener):
     def __init__(self, screen: Surface, to_scene: Callable):
